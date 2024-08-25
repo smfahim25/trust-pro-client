@@ -1,0 +1,130 @@
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+} */
+
+
+.main {
+    background-size: cover !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background: #fff;
+    text-align: left;
+}
+
+.main .img-top {
+    margin: 3.46667vw 3.46667vw 0;
+    display: flex;
+    align-items: center;
+}
+
+.main .content-title {
+    margin-top: 16vw;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 8.53333vw;
+    text-align: center;
+    color: #fff;
+}
+
+a:focus, a:visited, a:active {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+a {
+    text-decoration: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.main .img-top .custom-logo {
+    height: 12.8vw;
+    border-radius: 2.13333vw;
+    margin: 0 4.26667vw 0 0;
+    width: auto;
+}
+
+.main .img-top .theme-title {
+    font-size: 6.4vw;
+    color: #fff;
+    font-weight: 600;
+}
+
+.main .content-subtitle {
+    margin-top: 6.13333vw;
+    color: #fff;
+    font-family: "Poppins", sans-serif !important;
+    font-weight: 600;
+    font-size: 4.26667vw;
+    text-align: center;
+}
+
+.main .intro_list {
+    margin-top: 3.73333vw;
+    color: #fff;
+}
+
+.main .intro_list .intro_item {
+    padding: 0 5.33333vw;
+    display: flex;
+    align-items: flex-start;
+}
+
+.main .intro_list .intro_item span {
+    line-height: 6.4vw;
+    margin-bottom: 0;
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    text-align: left;
+    font-size: 3.73333vw;
+}
+
+.main .intro_list .intro_item .icon_select {
+    font-size: 4.26667vw;
+    color: #fff;
+    line-height: 6.4vw;
+    margin-right: 3.73333vw;
+    
+}
+
+.main .intro_img {
+    margin-top: 12vw;
+    max-height: 88vw;
+    text-align: center;
+    max-width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main .intro_img .img_phone {
+    max-height: 88vw;
+    min-height: 57.33333vw;
+    width: auto;
+}
+
+.main .download_actions {
+    margin-top: 7.46667vw;
+    padding-bottom: 2.66667vw;
+    display: flex;
+    justify-content: center;
+}
+
+.main .download_actions img:first-child {
+    margin-right: 6.66667vw;
+}
+.main .download_actions img {
+    width: 37.33333vw;
+    height: 11.46667vw;
+}

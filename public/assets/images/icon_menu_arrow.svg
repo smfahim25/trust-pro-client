@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>箭头</title>
+    <g id="Coinbase" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="设置弹窗" transform="translate(-654.000000, -454.000000)" fill-rule="nonzero">
+            <g id="编组-4" transform="translate(32.000000, 320.000000)">
+                <g id="箭头" transform="translate(622.000000, 134.000000)">
+                    <rect id="矩形" fill="#000000" opacity="0" x="0" y="0" width="32" height="32"></rect>
+                    <rect id="矩形" fill="#000000" opacity="0" x="0" y="0" width="32" height="32"></rect>
+                    <path d="M24.4444444,16 L9.6,31.6444444 C9.15555556,32 8.35555556,32.0888889 8,31.7333333 C7.73333334,31.4666667 7.55555556,30.8444445 8.08888888,30.3111111 L21.8666667,16.0888889 L8.08888888,1.77777778 C8.08888888,1.77777778 7.55555556,0.888888875 8.26666666,0.444444438 C8.88888888,1.33226763e-15 9.33333331,0.177777781 9.6,0.444444438 L24.4444444,16 Z" id="路径" fill="#353F52"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
