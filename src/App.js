@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import Home from "./Components/Home/Home";
 import GuestHome from "./Components/GuestHome/GuestHome";
@@ -24,11 +24,17 @@ import AdminRoute from "./Components/AdminComponents/AdminRoute";
 import ChatPopup from "./Components/ChatPopup/ChatPopup";
 import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
+import NotFound from "./Components/NotFound/NotFound";
 function App() {
   const [account, setAccount] = useState(null);
-  const { user, loading, setLoading } = useUser();
+  const { user, loading } = useUser();
   const [isChatVisible, setChatVisible] = useState(false);
 
+  useEffect(() => {
+    if (!window.location.hash) {
+      window.location.replace(`${window.location.href}#/`);
+    }
+  }, []);
 
   const handleChatClick = () => {
     setChatVisible(true);
@@ -38,7 +44,6 @@ function App() {
     setChatVisible(false);
   };
 
-
   return (
     <div>
       {loading && (
@@ -47,7 +52,7 @@ function App() {
         </div>
       )}
       <div className="app">
-        {user? (
+        {user ? (
           <>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -65,6 +70,7 @@ function App() {
                 element={<ReferralBonusHistory />}
               />
               <Route path="/contact-us" element={<Contact />} />
+              <Route path="/*" element={<NotFound />}></Route>
             </Routes>
             <ChatPopup visible={isChatVisible} onClose={handleCloseChat} />
             <div className="c-chat" onClick={handleChatClick}>
@@ -106,6 +112,7 @@ function App() {
                   </AdminRoute>
                 }
               />
+              <Route path="/*" element={<NotFound />}></Route>
             </Routes>
           </>
         )}
