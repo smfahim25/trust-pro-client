@@ -7,12 +7,12 @@ export const UserProvider = ({ children }) => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-  
+
   const [adminUser, setAdminUser] = useState(() => {
     const savedAdminUser = localStorage.getItem("adminUser");
     return savedAdminUser ? JSON.parse(savedAdminUser) : null;
   });
-  
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -28,6 +28,7 @@ export const UserProvider = ({ children }) => {
     setAdminUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("adminUser");
+    window.location.href("/");
   };
 
   return (

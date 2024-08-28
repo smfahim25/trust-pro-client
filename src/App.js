@@ -43,7 +43,7 @@ function App() {
   const handleCloseChat = () => {
     setChatVisible(false);
   };
-
+  console.log(user);
   return (
     <div>
       {loading && (
@@ -52,7 +52,7 @@ function App() {
         </div>
       )}
       <div className="app">
-        {user ? (
+        {user?.status === "active" ? (
           <>
             <Routes>
               <Route path="/" element={<Home />} />
