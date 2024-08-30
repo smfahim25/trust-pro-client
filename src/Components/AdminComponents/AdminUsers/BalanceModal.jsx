@@ -47,6 +47,7 @@ const BalanceModal = ({ isOpen, onClose, details }) => {
         <p className='text-start text-xs font-semibold' >UID : {details?.uuid}</p>
         <p className='text-start text-xs font-semibold'>Wallet : {details?.user_wallet}</p>
         </div>
+        <div className="overflow-auto max-h-[400px]">
         <table className="min-w-full border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
@@ -86,6 +87,8 @@ const BalanceModal = ({ isOpen, onClose, details }) => {
           ))}
         </tbody>
       </table>
+        </div>
+       
         <div className='mb-4'>
          
         </div>
