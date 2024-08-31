@@ -1,38 +1,48 @@
-import React from 'react';
-import { MdOutlineContactSupport } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { MdOutlineContactSupport } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const ChatPopup = ({ visible, onClose }) => {
-    if (!visible) return null;
-    const chatServiceName = "Live Chat";
-    return (
-        <div id="chat_popup">
-            <div className="ssb-overlay" style={{ zIndex: 2030 }}></div>
-            <div className="setting_popup ssb-popup ssb-popup--center" style={{ width: '80%', zIndex: 2031, height: 'auto' }}>
-                <div className="title fs-16 fc-353F52 ff_NunitoSemiBold flex justify-between">
-                    <div className="title-text">Chat with us</div>
-                    <div className="close" onClick={onClose}>
-                        <img src={`assets/images/icon_close.svg`} alt="Close" className="icon_close" />
-                    </div>
-                </div>
-                <div className="flex justify-center gap-5 mt-5">
-                    <Link className="" to={'/live-chat'}>
-                        <div onClick={onClose} className="">
-                            <img className='w-[35px] ml-2' src={`assets/images/service-chat.png`} alt="Chat Service" />
-                        </div>
-                        <div className="text-center">{chatServiceName || "Live Chat"}</div>
-                    </Link>
-                    <Link className="" to={'/contact-us'}>
-                        <div onClick={onClose} className="">
-                        <MdOutlineContactSupport size={35} className='text-cyan-400'/>
-                    
-                        </div>
-                        <div className="text-center">Contact Us</div>
-                    </Link>
-                </div>
-            </div> 
+  if (!visible) return null;
+  const chatServiceName = "Live Chat";
+  return (
+    <div id="chat_popup">
+      <div className="ssb-overlay" style={{ zIndex: 2030 }}></div>
+      <div
+        className="setting_popup ssb-popup ssb-popup--center"
+        style={{ width: "80%", zIndex: 2031, height: "auto" }}
+      >
+        <div className="title fs-16 fc-353F52 ff_NunitoSemiBold flex justify-between">
+          <div className="title-text">Chat with us</div>
+          <div className="close" onClick={onClose}>
+            <img
+              src={`assets/images/icon_close.svg`}
+              alt="Close"
+              className="icon_close"
+            />
+          </div>
         </div>
-    );
+        <div className="flex justify-center gap-5 mt-5">
+          <Link className="" to={"/live-chat"}>
+            <div onClick={onClose} className="">
+              <img
+                className="w-[35px] ml-2"
+                src={`assets/images/service-chat.png`}
+                alt="Chat Service"
+              />
+            </div>
+            <div className="text-center">{chatServiceName || "Live Chat"}</div>
+          </Link>
+          <Link className="" to={"/contact-us"}>
+            <div onClick={onClose} className="text-center">
+              <MdOutlineContactSupport size={35} className="text-[#1f49e7]" />
+            </div>
+            <div className="text-center">Contact Us</div>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ChatPopup;
