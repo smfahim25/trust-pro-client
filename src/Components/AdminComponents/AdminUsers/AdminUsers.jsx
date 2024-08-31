@@ -216,6 +216,7 @@ const AdminUsers = () => {
 
             <th className="py-2 px-4 border-b">Wallet</th>
             <th className="py-2 px-4 border-b">Mobile</th>
+            <th className="py-2 px-4 border-b">Trade Limit</th>
 
             <th className="py-2 px-4 border-b">Status</th>
             <th className="py-2 px-4 border-b">Registration</th>
@@ -237,7 +238,8 @@ const AdminUsers = () => {
               </td>
 
               <td className="py-2 px-4 border-b">{user?.mobile}</td>
-
+              
+              <td className="py-2 px-4 border-b">{user?.trade_limit}</td>
               <td className="py-2 px-4 border-b">{user?.status}</td>
               <td className="py-2 px-4 border-b">
                 {getFormattedDeliveryTime(user?.user_registered)}

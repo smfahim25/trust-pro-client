@@ -46,7 +46,7 @@ const ChatComponent = () => {
   const handleSendMessage = async () => {
     const messageData = {
       userId: user.id,
-      recipientId: 19,
+      recipientId: 17,
       messageText: message,
     };
     const response = await axios.post(

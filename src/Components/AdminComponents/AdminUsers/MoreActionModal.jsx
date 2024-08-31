@@ -14,6 +14,7 @@ const MoreActionModal = ({ isOpen, onClose, details, onUpdateSuccess,role }) => 
         status: '',
         note: '',
         employee: '',
+        trade_limit: '',
     });
 
     const [responseMessage, setResponseMessage] = useState('');
@@ -30,6 +31,7 @@ const MoreActionModal = ({ isOpen, onClose, details, onUpdateSuccess,role }) => 
                 role: details.role || 'user',
                 note: details.note || '',
                 employee: details.employee || '',
+                trade_limit: details.trade_limit,
             });
         }
     }, [details]);
@@ -69,10 +71,11 @@ const MoreActionModal = ({ isOpen, onClose, details, onUpdateSuccess,role }) => 
 
         <h2 className="text-2xl font-semibold leading-tight tracking-wide">Update User</h2>
         
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white ">
+        <div className="max-w-md mx-auto mt-2 p-2 bg-white ">
             {/* <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2> */}
             <form onSubmit={handleSubmit} >
-                <div className='grid grid-cols-2 gap-4'>
+                <div className="max-h-[60vh] overflow-y-auto">
+                <div className='grid grid-cols-2 gap-4 '>
                 <div className="mb-4">
                     <label className="block text-gray-700 font-bold mb-2" htmlFor="name">
                         Name
@@ -203,7 +206,23 @@ const MoreActionModal = ({ isOpen, onClose, details, onUpdateSuccess,role }) => 
                         placeholder="assign employee"
                     />
                 </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 font-bold mb-2" htmlFor="trade_limit">
+                        Trade limit
+                    </label>
+                    <input
+                        type="text"
+                        id="trade_limit"
+                        name="trade_limit"
+                        value={formData.trade_limit}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Trade Limit"
+                    />
                 </div>
+                </div>
+                </div>
+              
                 
 
                 <div className="flex justify-end">
