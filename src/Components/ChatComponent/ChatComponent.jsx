@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import Header from '../Header/Header';
-import axios from 'axios';
-import { useUser } from '../../context/UserContext';
-import useGetAllConversation from '../../hooks/useGetAllConversation';
-import useGetAllMessages from '../../hooks/useGetAllMessages';
-import API_BASE_URL from '../../api/getApiURL';
+import React, { useCallback, useEffect, useState } from "react";
+import Header from "../Header/Header";
+import axios from "axios";
+import { useUser } from "../../context/UserContext";
+import useGetAllConversation from "../../hooks/useGetAllConversation";
+import useGetAllMessages from "../../hooks/useGetAllMessages";
+import API_BASE_URL from "../../api/getApiURL";
 
 const ChatComponent = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [conversationId, setConversationId] = useState(4);
-  const {user} = useUser();
-  const {data} = useGetAllConversation(user.id);
-  const [toggleMessage,setToggleMessage] = useState(false);
+  const { user } = useUser();
+  const { data } = useGetAllConversation(user.id);
+  const [toggleMessage, setToggleMessage] = useState(false);
   // const {data:messages} = useGetAllMessages(conversationId,user.id);
 
   const [messages, setMessages] = useState(null);
@@ -32,52 +32,63 @@ const ChatComponent = () => {
         setLoading(false);
       }
     };
-   
-  
+
     fetchAllMessages();
-    if(toggleMessage){
+    if (toggleMessage) {
       fetchAllMessages();
     }
-  }, [conversationId, user,toggleMessage]);
-  
+  }, [conversationId, user, toggleMessage]);
 
   const handleInputChange = (e) => {
     setMessage(e.target.value);
   };
 
-  const handleSendMessage = async() => {
+  const handleSendMessage = async () => {
     const messageData = {
-      userId:user.id,
-      recipientId:19,
+      userId: user.id,
+      recipientId: 19,
       messageText: message,
-    }
-    const response = await axios.post(`${API_BASE_URL}/messages/send`,messageData);
-    console.log('Message sent:', message);
-    setMessage(''); // Clear the input field after sending
+    };
+    const response = await axios.post(
+      `${API_BASE_URL}/messages/send`,
+      messageData
+    );
+    console.log("Message sent:", message);
+    setMessage(""); // Clear the input field after sending
     setToggleMessage(!toggleMessage);
+  };
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
   };
 
   return (
     <div className="w-full">
-      <Header pageTitle="Live Chat"/>
-      <hr className='pb-4'/>
+      <Header pageTitle="Live Chat" />
+      <hr className="pb-4" />
       <div className="h-[83vh] overflow-y-auto">
-        {
-          messages?.map((message)=>
+        {messages?.map((message) => (
           <div key={message?.id} className="grid pb-1 px-2">
-             {message?.sender_id !== user.id ? (
- <div className="flex gap-2.5 mb-4">
- <div className="grid">
-   <h5 className="text-gray-900 text-sm font-semibold leading-snug pb-1">Support Admin</h5>
-   <div className="w-full flex flex-col">
-     <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
-       <h5 className="text-gray-900 text-sm font-normal leading-snug ">{message?.message_text}</h5>
-     </div>
-     <div className="justify-end items-center inline-flex mb-2.5">
-       <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">{message?.created_at}</h6>
-     </div>
-   </div>
-   {/* <div className="w-max grid">
+            {message?.sender_id !== user.id ? (
+              <div className="flex gap-2.5 mb-4">
+                <div className="grid">
+                  <h5 className="text-gray-900 text-sm font-semibold leading-snug pb-1">
+                    Support Admin
+                  </h5>
+                  <div className="w-full flex flex-col">
+                    <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
+                      <h5 className="text-gray-900 text-sm font-normal leading-snug ">
+                        {message?.message_text}
+                      </h5>
+                    </div>
+                    <div className="justify-end items-center inline-flex mb-2.5">
+                      <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">
+                        {message?.created_at}
+                      </h6>
+                    </div>
+                  </div>
+                  {/* <div className="w-max grid">
      <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex">
        <h5 className="text-gray-900 text-sm font-normal leading-snug">Let me know</h5>
      </div>
@@ -85,18 +96,24 @@ const ChatComponent = () => {
        <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">05:14 PM</h6>
      </div>
    </div> */}
- </div>
-</div>
-              ) : (
-                <div className="flex gap-2.5 justify-end pb-1">
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2.5 justify-end pb-1">
                 <div>
                   <div className="grid mb-2">
-                    <h5 className="text-right text-gray-900 text-sm font-semibold leading-snug pb-1">You</h5>
+                    <h5 className="text-right text-gray-900 text-sm font-semibold leading-snug pb-1">
+                      You
+                    </h5>
                     <div className="px-3 py-2 bg-indigo-600 rounded">
-                      <h2 className="text-white text-sm font-normal leading-snug">{message?.message_text}</h2>
+                      <h2 className="text-white text-sm font-normal leading-snug">
+                        {message?.message_text}
+                      </h2>
                     </div>
                     <div className="justify-start items-center inline-flex">
-                      <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">{message?.created_at}</h3>
+                      <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
+                        {message?.created_at}
+                      </h3>
                     </div>
                   </div>
                   {/* <div className="justify-center">
@@ -111,17 +128,20 @@ const ChatComponent = () => {
                   </div> */}
                 </div>
               </div>
-              )}
-           
+            )}
           </div>
-          )
-        }
-     
+        ))}
       </div>
-     
+
       <div className="w-full pl-3 pr-1 py-1 px-2 rounded-3xl border border-gray-200 items-center gap-2 inline-flex justify-between ">
         <div className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="22"
+            height="22"
+            viewBox="0 0 22 22"
+            fill="none"
+          >
             <g id="User Circle">
               <path
                 id="icon"
@@ -136,6 +156,7 @@ const ChatComponent = () => {
             placeholder="Type here..."
             value={message}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
           />
         </div>
         <div className="flex items-center gap-2">
@@ -168,10 +189,17 @@ const ChatComponent = () => {
             </g>
           </svg>
           <button
+            type="submit"
             className="items-center flex px-3 py-2 bg-indigo-600 rounded-full shadow"
             onClick={handleSendMessage}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+            >
               <g id="Send 01">
                 <path
                   id="icon"
@@ -182,7 +210,9 @@ const ChatComponent = () => {
                 />
               </g>
             </svg>
-            <h3 className="text-white text-xs font-semibold leading-4 px-2">Send</h3>
+            <h3 className="text-white text-xs font-semibold leading-4 px-2">
+              Send
+            </h3>
           </button>
         </div>
       </div>
