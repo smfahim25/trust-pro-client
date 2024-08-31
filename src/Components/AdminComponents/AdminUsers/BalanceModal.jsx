@@ -92,6 +92,8 @@ const BalanceModal = ({ isOpen, onClose, details }) => {
                                 <th className="py-2 px-4 border-b">Coin Name</th>
                                 <th className="py-2 px-4 border-b">Coin Symbol</th>
                                 <th className="py-2 px-4 border-b">Balance</th>
+                                <th className="py-2 px-4 border-b">Total Deposit</th>
+                                <th className="py-2 px-4 border-b">Total Withdraw</th>
                             </tr>
                         </thead>
                         <tbody className="text-center">
@@ -134,6 +136,8 @@ const BalanceModal = ({ isOpen, onClose, details }) => {
                                                 </span>
                                             )}
                                     </td>
+                                    <td className="py-2 px-4 border-b">{wallet?.total_deposits}</td>
+                                    <td className="py-2 px-4 border-b">{wallet?.total_withdrawals}</td>
                                 </tr>
                             ))}
                         </tbody>
