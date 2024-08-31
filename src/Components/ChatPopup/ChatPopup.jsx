@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdOutlineContactSupport } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 const ChatPopup = ({ visible, onClose }) => {
@@ -14,12 +15,19 @@ const ChatPopup = ({ visible, onClose }) => {
                         <img src={`assets/images/icon_close.svg`} alt="Close" className="icon_close" />
                     </div>
                 </div>
-                <div className="flex justify-center mt-5">
-                    <Link className="" to={'/contact-us'}>
+                <div className="flex justify-center gap-5 mt-5">
+                    <Link className="" to={'/live-chat'}>
                         <div onClick={onClose} className="">
                             <img className='w-[35px] ml-2' src={`assets/images/service-chat.png`} alt="Chat Service" />
                         </div>
                         <div className="text-center">{chatServiceName || "Live Chat"}</div>
+                    </Link>
+                    <Link className="" to={'/contact-us'}>
+                        <div onClick={onClose} className="">
+                        <MdOutlineContactSupport size={35} className='text-cyan-400'/>
+                    
+                        </div>
+                        <div className="text-center">Contact Us</div>
                     </Link>
                 </div>
             </div> 

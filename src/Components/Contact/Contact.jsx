@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../Header/Header';
 import useSettings from '../../hooks/useSettings';
+import ChatComponent from '../ChatComponent/ChatComponent';
 
 const Contact = () => {
     const {settings} = useSettings();
@@ -12,6 +13,8 @@ const Contact = () => {
             <h2>Online support WhatsApp: {settings?.whatsapp}</h2>
             <h2>Email: {settings?.email}</h2>
             </div>
+            <button>Live Chat</button>
+            <ChatComponent/>
         </div>
     );
 };

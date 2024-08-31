@@ -25,6 +25,7 @@ import ChatPopup from "./Components/ChatPopup/ChatPopup";
 import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
 import NotFound from "./Components/NotFound/NotFound";
+import ChatComponent from "./Components/ChatComponent/ChatComponent";
 function App() {
   const [account, setAccount] = useState(null);
   const { user, loading } = useUser();
@@ -70,6 +71,7 @@ function App() {
                 element={<ReferralBonusHistory />}
               />
               <Route path="/contact-us" element={<Contact />} />
+              <Route path="/live-chat" element={<ChatComponent />} />
               <Route path="/*" element={<NotFound />}></Route>
             </Routes>
             <ChatPopup visible={isChatVisible} onClose={handleCloseChat} />
