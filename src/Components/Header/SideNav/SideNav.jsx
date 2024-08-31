@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
 import { SiConvertio } from "react-icons/si";
 import useSettings from "../../../hooks/useSettings";
@@ -14,8 +14,13 @@ const SideNav = (props) => {
   const { toggleMenu, setToggleMenu } = props;
   const [knowledgeExpanded, setKnowledgeExpanded] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
-  const { user,logout } = useUser();
+  const { user, logout } = useUser();
+  const navigate = useNavigate();
 
+  const handleSignOut = () => {
+    logout();
+    navigate("/login");
+  };
   const toggleKnowledgeCollapse = () => {
     setKnowledgeExpanded(!knowledgeExpanded);
   };
@@ -183,9 +188,9 @@ const SideNav = (props) => {
                 </div>
                 <div
                   className="items flex align-center menu-settings"
-                  onClick={logout}
+                  onClick={handleSignOut}
                 >
-                  <FiLogOut size={20} className="m-r-10 text-[#1552f0]"/>
+                  <FiLogOut size={20} className="m-r-10 text-[#1552f0]" />
                   <span className="over-line-1">Logout</span>
                 </div>
               </div>

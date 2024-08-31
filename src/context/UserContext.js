@@ -28,7 +28,6 @@ export const UserProvider = ({ children }) => {
     setAdminUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("adminUser");
-    window.location.href("/");
   };
 
   return (
