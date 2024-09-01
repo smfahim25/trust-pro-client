@@ -11,6 +11,7 @@ import EditWallet from "./Wallets/EditWallet";
 import Settings from "./Settings/Settings";
 import AllAdmins from "./AllAdmins/AllAdmins";
 import Contact from "./Contact/Contact";
+import SupportInbox from "./SupportInbox/SupportInbox";
 
 const Layout = () => {
   return (
@@ -31,6 +32,7 @@ const Layout = () => {
               <Route path="/trading" element={<Trading />}></Route>
               <Route path="/settings" element={<Settings />}></Route>
               <Route path="/contact" element={<Contact />}></Route>
+              <Route path="/live-support" element={<SupportInbox />}></Route>
             </Routes>
           </div>
         </div>

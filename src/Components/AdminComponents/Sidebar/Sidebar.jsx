@@ -41,6 +41,14 @@ const Sidebar = () => {
       iconPath: <IoChatbox size={20} />,
       roles: ["superadmin"],
     },
+
+    {
+      to: "/cradmin/live-support",
+      label: "Inbox",
+      iconPath: <IoChatbox size={20} />,
+      roles: ["admin","superadmin"],
+    },
+
     {
       to: "/cradmin/wallets",
       label: "Wallets",
