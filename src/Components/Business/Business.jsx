@@ -152,8 +152,8 @@ const Business = () => {
       toast.error(`Minimum deposit amount is ${selectedMiniUsdt} USDT`);
     } else if (amount > parseFloat(userBalance)) {
       toast.error("Balance is not available");
-    }else if ( 0 >= parseInt(user?.trade_limit)) {
-      toast.error("Please deposit again");
+    } else if (0 >= parseInt(user?.trade_limit)) {
+      toast.error("Trade limit reached, Please deposit again");
     } else {
       try {
         setLoading(true);
