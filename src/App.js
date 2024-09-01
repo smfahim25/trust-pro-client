@@ -80,7 +80,7 @@ function App() {
                 element={<ReferralBonusHistory />}
               />
               <Route path="/contact-us" element={<Contact />} />
-              {/* <Route path="/live-chat" element={<ChatComponent />} /> */}
+              <Route path="/live-chat" element={<ChatComponent />} />
               <Route path="/*" element={<NotFound />}></Route>
             </Routes>
             {!location.pathname.includes("/live-chat") && (

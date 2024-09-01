@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import API_BASE_URL from '../../../api/getApiURL';
+import { useUser } from '../../../context/UserContext';
 
 const SupportInbox = () => {
+  const { adminUser } = useUser();
     const [conversations, setConversations] = useState([]);
     const [selectedConversation, setSelectedConversation] = useState(null);
     const [replyText, setReplyText] = useState('');
+    const [reciverId, setReciverId] = useState(null);
+    const [conversationData, setConversationData] = useState(null);
 
     useEffect(() => {
         fetchConversations();
@@ -22,7 +26,7 @@ const SupportInbox = () => {
 
     const fetchMessages = async (conversationId) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/v1/messages/${conversationId}/user/0`);
+            const response = await axios.get(`${API_BASE_URL}/messages/${conversationId}/user/0`);
             setSelectedConversation({ ...selectedConversation, messages: response.data });
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -33,9 +37,9 @@ const SupportInbox = () => {
         if (replyText.trim() === '') return;
 
         try {
-            const response = await axios.post('http://localhost:5000/api/v1/messages/send', {
-                userId: 1, // Admin user ID
-                recipientId: selectedConversation.user2_id,
+            const response = await axios.post(`${API_BASE_URL}/messages/send`, {
+                userId: adminUser.id, // Admin user ID
+                recipientId: reciverId,
                 messageText: replyText,
                 senderType: 'admin'
             });
@@ -50,8 +54,14 @@ const SupportInbox = () => {
         }
     };
 
+    const handleFetchConversation = (conv)=>{
+      fetchMessages(conv.conversation_id);
+      setReciverId(conv?.user1_id);
+      setConversationData(conv);
+    }
+
     return (
-        <div className="min-h-screen bg-gray-100 flex">
+      <div className="min-h-screen bg-gray-100 flex">
       <div className="w-1/3 bg-white shadow-lg p-4">
         <h3 className="text-xl font-bold mb-4">Conversations</h3>
         <ul className="space-y-2">
@@ -59,9 +69,9 @@ const SupportInbox = () => {
             <li
               key={conv.conversation_id}
               className="p-2 bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-md"
-              onClick={() => fetchMessages(conv.conversation_id)}
+              onClick={() => handleFetchConversation(conv)}
             >
-              Conversation with {conv.user1_uuid === 'Anonymous' ? 'Anonymous User' : conv.user1_uuid}
+            {conv?.user1_name ||  conv?.user1_uuid}
             </li>
           ))}
         </ul>
@@ -70,6 +80,9 @@ const SupportInbox = () => {
       <div className="max-h-screen w-2/3 bg-white shadow-lg p-4 flex flex-col">
         {selectedConversation ? (
           <>
+          <div className="font-bold pb-2">
+          {conversationData?.user1_name ||  conversationData?.user1_uuid}
+          </div>
             <div className="flex-1 overflow-y-auto mb-4">
               {selectedConversation.messages.map((msg, index) => (
                 <div key={index} className={`mb-2 p-2 rounded-md ${msg.sender_type === 'admin' ? 'bg-blue-200 text-right' : 'bg-gray-200'}`}>

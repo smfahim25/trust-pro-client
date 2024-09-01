@@ -5,13 +5,12 @@ import { useUser } from "../../context/UserContext";
 import useGetAllConversation from "../../hooks/useGetAllConversation";
 import API_BASE_URL from "../../api/getApiURL";
 import { IoSend } from "react-icons/io5";
-import { ImAttachment } from "react-icons/im";
 import { CgProfile } from "react-icons/cg";
 import debounce from "lodash.debounce"; // Import debounce function from lodash
 
 const ChatComponent = () => {
   const [message, setMessage] = useState("");
-  const [conversationId, setConversationId] = useState(4);
+  const [conversationId, setConversationId] = useState(null);
   const { user } = useUser();
   const { data } = useGetAllConversation(user.id);
   const [toggleMessage, setToggleMessage] = useState(false);
@@ -31,6 +30,9 @@ const ChatComponent = () => {
   };
 
   useEffect(() => {
+    if(data){
+      setConversationId(data[0].conversation_id);
+    }
     const fetchAllMessages = async () => {
       try {
         setLoading(true);
@@ -49,7 +51,7 @@ const ChatComponent = () => {
     if (toggleMessage) {
       fetchAllMessages();
     }
-  }, [conversationId, user, toggleMessage]);
+  }, [conversationId, user, toggleMessage,data]);
 
   useEffect(() => {
     // Scroll to bottom when the messages state is updated
@@ -68,11 +70,14 @@ const ChatComponent = () => {
       userId: user.id,
       recipientId: 17,
       messageText: message,
+      senderType:'user',
     };
 
     try {
-      await axios.post(`${API_BASE_URL}/messages/send`, messageData);
-      console.log("Message sent:", message);
+      const response = await axios.post(`${API_BASE_URL}/messages/send`, messageData);
+      if(response && !conversationId){
+        setConversationId(response?.data?.conversation_id);
+      }
       setMessage(""); // Clear the input field after sending
       setToggleMessage(!toggleMessage);
     } catch (err) {
