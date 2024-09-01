@@ -169,6 +169,7 @@ const Trading = () => {
             <th className="py-2 px-4 border-b">UUID</th>
             <th className="py-2 px-4 border-b">Order Id</th>
             <th className="py-2 px-4 border-b">Trade Coin</th>
+            <th className="py-2 px-4 border-b">Trade Position</th>
             <th className="py-2 px-4 border-b">Status</th>
             <th className="py-2 px-4 border-b">Trading Date</th>
             <th className="py-2 px-4 border-b">Action</th>
@@ -184,7 +185,26 @@ const Trading = () => {
               <td className="py-2 px-4 border-b">
                 {getMetalCoinName(trade?.trade_coin_id)}
               </td>
-              <td className="py-2 px-4 border-b">{trade?.status}</td>
+              <td className={`py-2 px-4 border-b text-white font-semibold`}>
+                <span
+                  className={`${
+                    trade?.order_position === "buy"
+                      ? "bg-green-600"
+                      : "bg-red-600"
+                  } px-5 py-2`}
+                >
+                  {trade?.order_position}
+                </span>
+              </td>
+              <td className="py-2 border-b text-white font-semibold">
+                <span
+                  className={`${
+                    trade?.status === "running" ? "bg-green-600" : "bg-blue-600"
+                  } px-5 py-2`}
+                >
+                  {trade?.status}
+                </span>
+              </td>
               <td className="py-2 px-4 border-b">
                 {getFormattedDeliveryTime(trade?.created_at)}
               </td>
