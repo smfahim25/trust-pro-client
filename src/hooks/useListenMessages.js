@@ -1,27 +1,19 @@
 import { useEffect } from "react";
 import { useSocketContext } from "../context/SocketContext";
-import useGetAllMessages from "./useGetAllMessages";
+import useConversation from "../zustand/useConversation";
+import notificationSound from "../Assets/sound/notification.mp3"
+const useListenMessages = () => {
+	const { socket } = useSocketContext();
+	const { messages, setMessages } = useConversation();
 
-const useListenMessages = (convId, userId) => {
-  const { socket } = useSocketContext();
-  const { messages, setMessages } = useGetAllMessages(convId, userId);
-  console.log(messages);
-  useEffect(() => {
-    if (!convId || !socket) return;
+	useEffect(() => {
+		socket?.on("newMessage", (newMessage) => {
+			const sound = new Audio(notificationSound);
+			sound.play();
+			setMessages([...messages, newMessage]);
+		});
 
-    const handleNewMessage = (newMessage) => {
-      console.log("getting message in admin : ",newMessage);
-      setMessages(prevMessages => [...prevMessages, newMessage]);
-    };
-
-    socket.on("newMessage", handleNewMessage);
-
-    return () => {
-      socket.off("newMessage", handleNewMessage);
-    };
-  }, [socket, convId, userId, setMessages]);
-
-  return { messages,setMessages };
+		return () => socket?.off("newMessage");
+	}, [socket, setMessages, messages]);
 };
-
 export default useListenMessages;

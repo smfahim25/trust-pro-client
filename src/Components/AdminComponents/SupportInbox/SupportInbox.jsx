@@ -4,30 +4,24 @@ import { API_BASE_URL } from '../../../api/getApiURL';
 import { useUser } from '../../../context/UserContext';
 import { useSocketContext } from '../../../context/SocketContext';
 import useListenMessages from '../../../hooks/useListenMessages';
+import useGetMessages from '../../../hooks/useGetMessages';
+import useConversation from '../../../zustand/useConversation';
 
 const SupportInbox = () => {
   const { adminUser } = useUser();
   const { onlineUsers } = useSocketContext();
   const [conversations, setConversations] = useState([]);
-  const [selectedConversation, setSelectedConversation] = useState(null);
   const [replyText, setReplyText] = useState('');
-  const [reciverId, setReciverId] = useState(null);
-  const [conversationId, setConversationId] = useState(null);
-
-  // const { messages: liveMessages } = useListenMessages(conversationId, 0);
+  const { selectedConversation, setSelectedConversation,setMessages } = useConversation();
+  const { messages, loading } = useGetMessages();
+  useListenMessages();
 
   useEffect(() => {
     fetchConversations();
-  }, []);
-
-  // useEffect(() => {
-  //   if (liveMessages && selectedConversation) {
-  //     setSelectedConversation((prevConversation) => ({
-  //       ...prevConversation,
-  //       messages: [...(prevConversation?.messages || []), ...liveMessages],
-  //     }));
-  //   }
-  // }, [liveMessages]);
+    if(messages){
+      console.log(messages);
+    }
+  }, [messages]);
 
   const fetchConversations = async () => {
     try {
@@ -37,31 +31,18 @@ const SupportInbox = () => {
       console.error('Error fetching conversations:', error);
     }
   };
-
-  const fetchMessages = async (conversationId) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/messages/${conversationId}/user/0`);
-      setSelectedConversation({ ...selectedConversation, messages: response.data });
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    }
-  };
-
   const sendReply = async () => {
     if (replyText.trim() === '' || !selectedConversation) return;
-
+    console.log(selectedConversation);
     try {
       const response = await axios.post(`${API_BASE_URL}/messages/send`, {
         userId: adminUser.id, // Admin user ID
-        recipientId: reciverId,
+        recipientId: selectedConversation?.user1_id,
         messageText: replyText,
         senderType: 'admin',
       });
+      setMessages([...messages, response?.data]);
 
-      setSelectedConversation((prevConversation) => ({
-        ...prevConversation,
-        messages: [...(prevConversation?.messages || []), response.data],
-      }));
       setReplyText('');
     } catch (error) {
       console.error('Error sending reply:', error);
@@ -69,9 +50,6 @@ const SupportInbox = () => {
   };
 
   const handleFetchConversation = (conv) => {
-    fetchMessages(conv.conversation_id);
-    setConversationId(conv.conversation_id);
-    setReciverId(conv?.user1_id);
     setSelectedConversation(conv);
   };
 
@@ -110,7 +88,7 @@ const SupportInbox = () => {
               {selectedConversation?.user1_name || selectedConversation?.user1_uuid}
             </div>
             <div className="flex-1 overflow-y-auto mb-4">
-              {selectedConversation?.messages?.map((msg, index) => (
+              {messages?.map((msg, index) => (
                 <div key={index} className={`mb-2 p-2 rounded-md ${msg.sender_type === 'admin' ? 'bg-blue-200 text-right' : 'bg-gray-200'}`}>
                   <p>{msg.message_text}</p>
                 </div>
