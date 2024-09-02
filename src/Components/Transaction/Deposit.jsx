@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import imgNoData from "../../Assets/images/img_nodata.png";
 import { useUser } from "../../context/UserContext";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 import iconMenuArrow from "../../Assets/images/icon_menu_arrow.svg";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 

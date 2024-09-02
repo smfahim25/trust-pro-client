@@ -3,20 +3,19 @@ import Header from "../Header/Header";
 import axios from "axios";
 import { useUser } from "../../context/UserContext";
 import useGetAllConversation from "../../hooks/useGetAllConversation";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 import { IoSend } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
-import debounce from "lodash.debounce"; // Import debounce function from lodash
+import debounce from "lodash.debounce"; 
+import useListenMessages from "../../hooks/useListenMessages";
 
 const ChatComponent = () => {
   const [message, setMessage] = useState("");
+   
   const [conversationId, setConversationId] = useState(null);
   const { user } = useUser();
   const { data } = useGetAllConversation(user.id);
-  const [toggleMessage, setToggleMessage] = useState(false);
-  const [messages, setMessages] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {messages,setMessages} = useListenMessages(conversationId,user.id);
 
   // Create refs for the chat container and file input
   const chatEndRef = useRef(null);
@@ -33,25 +32,7 @@ const ChatComponent = () => {
     if(data){
       setConversationId(data[0].conversation_id);
     }
-    const fetchAllMessages = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `${API_BASE_URL}/messages/${conversationId}/user/${user.id}`
-        );
-        setMessages(response.data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAllMessages();
-    if (toggleMessage) {
-      fetchAllMessages();
-    }
-  }, [conversationId, user, toggleMessage,data]);
+  }, [data]);
 
   useEffect(() => {
     // Scroll to bottom when the messages state is updated
@@ -68,7 +49,7 @@ const ChatComponent = () => {
 
     const messageData = {
       userId: user.id,
-      recipientId: 17,
+      recipientId: 0,
       messageText: message,
       senderType:'user',
     };
@@ -78,8 +59,8 @@ const ChatComponent = () => {
       if(response && !conversationId){
         setConversationId(response?.data?.conversation_id);
       }
+      setMessages(prevMessages => [...prevMessages, response?.data]);
       setMessage(""); // Clear the input field after sending
-      setToggleMessage(!toggleMessage);
     } catch (err) {
       console.error("Failed to send message:", err);
     }
@@ -115,7 +96,7 @@ const ChatComponent = () => {
   return (
     <div className="w-full">
       <Header pageTitle="Live Chat" />
-      <hr className="pb-4" />
+      <hr className="" />
       <div className="h-[83vh] overflow-y-auto">
         {messages?.map((message, index) => {
           const isCurrentUser = message?.sender_id === user.id;

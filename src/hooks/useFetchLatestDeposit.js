@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import API_BASE_URL from "../api/getApiURL";
+import {API_BASE_URL} from "../api/getApiURL";
 
 const useFetchLatestDeposit = (userId, coinId) => {
   const [data, setData] = useState(null);

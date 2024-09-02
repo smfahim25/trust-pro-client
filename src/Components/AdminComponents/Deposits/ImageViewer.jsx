@@ -1,5 +1,5 @@
 import React from "react";
-import API_BASE_URL from "../../../api/getApiURL";
+import {API_BASE_URL} from "../../../api/getApiURL";
 import { IoCloseCircleSharp } from "react-icons/io5";
 
 const ImageViewer = ({ isOpen, onClose, details, title }) => {

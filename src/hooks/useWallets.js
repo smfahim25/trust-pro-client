@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import API_BASE_URL from "../api/getApiURL";
+import {API_BASE_URL} from "../api/getApiURL";
 
 const useWallets = (id) => {
   const [wallets, setWallets] = useState([]);

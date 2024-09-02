@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API_BASE_URL from "../../../api/getApiURL";
+import {API_BASE_URL} from "../../../api/getApiURL";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useUser } from "../../../context/UserContext";

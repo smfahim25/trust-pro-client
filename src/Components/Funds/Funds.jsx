@@ -3,7 +3,7 @@ import Header from "../Header/Header";
 import axios from "axios";
 import { useUser } from "../../context/UserContext";
 import { useLocation } from "react-router";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 import useFetchLatestDeposit from "../../hooks/useFetchLatestDeposit";
 import { useFetchUserBalance } from "../../hooks/useFetchUserBalance";
 import { FaRegCopy } from "react-icons/fa";

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../../../api/getApiURL';
+import {API_BASE_URL} from '../../../api/getApiURL';
 import { toast } from 'react-toastify';
 
 const MoreActionModal = ({ isOpen, onClose, details, onUpdateSuccess,role }) => {

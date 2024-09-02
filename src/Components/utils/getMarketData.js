@@ -1,4 +1,4 @@
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 
 const fetchForexMarketData = async (coin) => {
     const apiUrl = `${API_BASE_URL}/market/forex/${coin}`;

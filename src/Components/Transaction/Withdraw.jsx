@@ -3,7 +3,7 @@ import imgNoData from "../../Assets/images/img_nodata.png";
 import iconMenuArrow from "../../Assets/images/icon_menu_arrow.svg";
 import { useUser } from "../../context/UserContext";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 
 const Withdraw = ({ openTransactionHistory }) => {
   const [withdraws, setWithdraws] = useState([]);

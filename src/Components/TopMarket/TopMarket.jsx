@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 import numberFormat from "../utils/numberFormat";
 import { Link } from "react-router-dom";
 import Chart from "../Chart/chart";

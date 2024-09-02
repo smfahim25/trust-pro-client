@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import headerLogo from "../../Assets/images/header-logo.png";
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import API_BASE_URL from '../../api/getApiURL';
+import {API_BASE_URL} from '../../api/getApiURL';
 import { toast } from 'react-toastify';
 
 const Register = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Chart from "../Chart/chart";
 import { Link } from "react-router-dom";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 import getMetalCoinName from "../utils/getMetalCoinName";
 import numberFormat from "../utils/numberFormat";
 import { useUser } from "../../context/UserContext";

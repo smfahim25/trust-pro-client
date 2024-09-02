@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../Header/Header";
 import { useUser } from "../../context/UserContext";
 import axios from "axios";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 import { toast } from "react-toastify";
 
 const Profile = (props) => {

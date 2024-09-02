@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useUser } from '../../../context/UserContext';
-import API_BASE_URL from '../../../api/getApiURL';
+import {API_BASE_URL} from '../../../api/getApiURL';
 
 const AdminLogin = () => {
     const { setUser, setAdminUser, setLoading } = useUser();

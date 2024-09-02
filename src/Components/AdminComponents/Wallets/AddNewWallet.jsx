@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import API_BASE_URL from "../../../api/getApiURL";
+import {API_BASE_URL} from "../../../api/getApiURL";
 
 const AddNewWallet = () => {
   const coinAPI = "https://api.coinlore.net/api/tickers/?limit=50";

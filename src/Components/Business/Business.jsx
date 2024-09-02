@@ -10,7 +10,7 @@ import { useUser } from "../../context/UserContext";
 import useCryptoTradeConverter from "../../hooks/userCryptoTradeConverter";
 import { useFetchUserBalance } from "../../hooks/useFetchUserBalance";
 import { useUpdateUserBalance } from "../../hooks/useUpdateUserBalance";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 import { toast } from "react-toastify";
 import useTimerProfit from "../../hooks/useTimerProfit";
 import TradeviewChart from "../Chart/TradeviewChart";

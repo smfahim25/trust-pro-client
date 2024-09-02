@@ -1,67 +1,88 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../../../api/getApiURL';
+import { API_BASE_URL } from '../../../api/getApiURL';
 import { useUser } from '../../../context/UserContext';
+import { useSocketContext } from '../../../context/SocketContext';
+import useListenMessages from '../../../hooks/useListenMessages';
 
 const SupportInbox = () => {
   const { adminUser } = useUser();
-    const [conversations, setConversations] = useState([]);
-    const [selectedConversation, setSelectedConversation] = useState(null);
-    const [replyText, setReplyText] = useState('');
-    const [reciverId, setReciverId] = useState(null);
-    const [conversationData, setConversationData] = useState(null);
+  const { onlineUsers } = useSocketContext();
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [replyText, setReplyText] = useState('');
+  const [reciverId, setReciverId] = useState(null);
+  const [conversationId, setConversationId] = useState(null);
 
-    useEffect(() => {
-        fetchConversations();
-    }, []);
+  // const { messages: liveMessages } = useListenMessages(conversationId, 0);
 
-    const fetchConversations = async () => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/conversation/`);
-            setConversations(response.data);
-        } catch (error) {
-            console.error('Error fetching conversations:', error);
-        }
-    };
+  useEffect(() => {
+    fetchConversations();
+  }, []);
 
-    const fetchMessages = async (conversationId) => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/messages/${conversationId}/user/0`);
-            setSelectedConversation({ ...selectedConversation, messages: response.data });
-        } catch (error) {
-            console.error('Error fetching messages:', error);
-        }
-    };
+  // useEffect(() => {
+  //   if (liveMessages && selectedConversation) {
+  //     setSelectedConversation((prevConversation) => ({
+  //       ...prevConversation,
+  //       messages: [...(prevConversation?.messages || []), ...liveMessages],
+  //     }));
+  //   }
+  // }, [liveMessages]);
 
-    const sendReply = async () => {
-        if (replyText.trim() === '') return;
-
-        try {
-            const response = await axios.post(`${API_BASE_URL}/messages/send`, {
-                userId: adminUser.id, // Admin user ID
-                recipientId: reciverId,
-                messageText: replyText,
-                senderType: 'admin'
-            });
-
-            setSelectedConversation({
-                ...selectedConversation,
-                messages: [...selectedConversation.messages, response.data]
-            });
-            setReplyText('');
-        } catch (error) {
-            console.error('Error sending reply:', error);
-        }
-    };
-
-    const handleFetchConversation = (conv)=>{
-      fetchMessages(conv.conversation_id);
-      setReciverId(conv?.user1_id);
-      setConversationData(conv);
+  const fetchConversations = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/conversation/`);
+      setConversations(response.data);
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
     }
+  };
 
-    return (
-      <div className="min-h-screen bg-gray-100 flex">
+  const fetchMessages = async (conversationId) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/messages/${conversationId}/user/0`);
+      setSelectedConversation({ ...selectedConversation, messages: response.data });
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const sendReply = async () => {
+    if (replyText.trim() === '' || !selectedConversation) return;
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/messages/send`, {
+        userId: adminUser.id, // Admin user ID
+        recipientId: reciverId,
+        messageText: replyText,
+        senderType: 'admin',
+      });
+
+      setSelectedConversation((prevConversation) => ({
+        ...prevConversation,
+        messages: [...(prevConversation?.messages || []), response.data],
+      }));
+      setReplyText('');
+    } catch (error) {
+      console.error('Error sending reply:', error);
+    }
+  };
+
+  const handleFetchConversation = (conv) => {
+    fetchMessages(conv.conversation_id);
+    setConversationId(conv.conversation_id);
+    setReciverId(conv?.user1_id);
+    setSelectedConversation(conv);
+  };
+
+  const checkOnlineStatus = (userId) => {
+    const userIdStr = String(userId);
+    const isOnline = onlineUsers?.map(String).includes(userIdStr);
+    return isOnline;
+  };
+  
+  return (
+    <div className="min-h-screen bg-gray-100 flex">
       <div className="w-1/3 bg-white shadow-lg p-4">
         <h3 className="text-xl font-bold mb-4">Conversations</h3>
         <ul className="space-y-2">
@@ -71,7 +92,12 @@ const SupportInbox = () => {
               className="p-2 bg-gray-200 hover:bg-gray-300 cursor-pointer rounded-md"
               onClick={() => handleFetchConversation(conv)}
             >
-            {conv?.user1_name ||  conv?.user1_uuid}
+              <div className="flex justify-between">
+                <p>{conv?.user1_name || conv?.user1_uuid}</p>
+                <p className={`text-xs ${checkOnlineStatus(conv.user1_id) ? 'text-green-500' : 'text-red-500'}`}>
+                  {checkOnlineStatus(conv.user1_id) ? 'Online' : 'Offline'}
+                </p>
+              </div>
             </li>
           ))}
         </ul>
@@ -80,11 +106,11 @@ const SupportInbox = () => {
       <div className="max-h-screen w-2/3 bg-white shadow-lg p-4 flex flex-col">
         {selectedConversation ? (
           <>
-          <div className="font-bold pb-2">
-          {conversationData?.user1_name ||  conversationData?.user1_uuid}
-          </div>
+            <div className="font-bold pb-2">
+              {selectedConversation?.user1_name || selectedConversation?.user1_uuid}
+            </div>
             <div className="flex-1 overflow-y-auto mb-4">
-              {selectedConversation.messages.map((msg, index) => (
+              {selectedConversation?.messages?.map((msg, index) => (
                 <div key={index} className={`mb-2 p-2 rounded-md ${msg.sender_type === 'admin' ? 'bg-blue-200 text-right' : 'bg-gray-200'}`}>
                   <p>{msg.message_text}</p>
                 </div>
@@ -110,7 +136,7 @@ const SupportInbox = () => {
         )}
       </div>
     </div>
-    );
+  );
 };
 
 export default SupportInbox;

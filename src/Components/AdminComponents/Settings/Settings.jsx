@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../../../context/UserContext";
 import axios from "axios";
-import API_BASE_URL from "../../../api/getApiURL";
+import {API_BASE_URL} from "../../../api/getApiURL";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import { toast } from "react-toastify";
 

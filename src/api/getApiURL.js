@@ -1,7 +1,6 @@
-// const API_BASE_URL = "https://cryptotradeapi.solvyxx.com/api/v1";
-// const API_BASE_URL ="https://metaadmin.online/api/v1";
-const API_BASE_URL = "http://localhost:5000/api/v1";
+// const apiURL = "https://cryptotradeapi.solvyxx.com";
+// const apiURL = "https://proit99.online";
+const apiURL = "http://localhost:5000";
+const API_BASE_URL = `${apiURL}/api/v1`;
 
-// const API_BASE_URL = "https://proit99.online/api/v1";
-
-export default API_BASE_URL;
+export { apiURL, API_BASE_URL };

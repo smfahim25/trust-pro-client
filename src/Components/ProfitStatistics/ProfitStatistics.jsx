@@ -4,7 +4,7 @@ import iconMenuArrow from "../../Assets/images/icon_menu_arrow.svg";
 import iconClose from "../../Assets/images/icon_close.svg";
 import Header from "../Header/Header";
 import { useUser } from "../../context/UserContext";
-import API_BASE_URL from "../../api/getApiURL";
+import {API_BASE_URL} from "../../api/getApiURL";
 
 const parseDuration = (duration) => {
   const durationMap = {

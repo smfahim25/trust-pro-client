@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API_BASE_URL from "../../../api/getApiURL";
+import {API_BASE_URL} from "../../../api/getApiURL";
 import DepositModal from "../Deposits/DepositModal";
 import axios from "axios";
 import { toast } from "react-toastify";

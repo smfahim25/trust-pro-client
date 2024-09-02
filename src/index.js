@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 // Change BrowserRouter to HashRouter
 import { HashRouter } from "react-router-dom";
 import { UserProvider } from "./context/UserContext";
+import { SocketContextProvider } from "./context/SocketContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -13,7 +14,9 @@ root.render(
     {/* Use HashRouter instead of BrowserRouter */}
     <UserProvider>
       <HashRouter>
-        <App />
+        <SocketContextProvider>
+          <App />
+        </SocketContextProvider>
       </HashRouter>
     </UserProvider>,
   </React.StrictMode>
