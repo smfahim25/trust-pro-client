@@ -43,8 +43,6 @@ const Login = () => {
         toast.success("Login successful!");
         navigate("/");
       }
-
-      console.log("Login successful:", response.data);
       // Handle successful login here (e.g., redirect to another page)
     } catch (error) {
       setLoading(false);

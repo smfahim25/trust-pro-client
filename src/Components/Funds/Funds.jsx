@@ -50,9 +50,15 @@ const Funds = () => {
       }
       setAvailableBalance(convertB);
     };
-
-    getConvertedAmount();
-  }, [balance?.coin_amount, wallet.coin_id, convertUSDTToCoin]);
+    if (!availableBalance) {
+      getConvertedAmount();
+    }
+  }, [
+    balance?.coin_amount,
+    wallet.coin_id,
+    convertUSDTToCoin,
+    availableBalance,
+  ]);
 
   // console.log(avilable);
   const handleSwitchTab = (tab) => {
@@ -205,7 +211,10 @@ const Funds = () => {
     const countdownEnd = new Date(createdAt.getTime() + 60 * 60 * 1000); // Add 1 hour to the created_at time
 
     const updateTimer = () => {
-      if (latestDeposit?.status === "approved") {
+      if (
+        latestDeposit?.status === "approved" ||
+        latestDeposit?.status === "rejected"
+      ) {
         clearInterval(timerInterval);
         setTimeLeft("");
         return;
@@ -461,21 +470,26 @@ const Funds = () => {
                     Recipient's Wallet Address
                   </span>
                   <div
-                    className="address text-color ff_NunitoRegular"
+                    className="address text-color ff_NunitoRegular flex items-center"
                     id="wallet_address"
                     style={{
                       marginTop: "5px",
-                      fontSize: "18px",
+                      fontSize: "14px",
                       fontWeight: "bold",
                     }}
                   >
                     {wallet?.wallet_address.slice(0, 20)}...
-                    <span
-                      style={{ marginLeft: "5px", cursor: "pointer" }}
+                    <div
+                      className="flex items-center gap-2 cursor-pointer"
                       onClick={handleCopyAddress}
                     >
-                      <FaRegCopy /> Copy Address
-                    </span>
+                      <span style={{ marginLeft: "5px", cursor: "pointer" }}>
+                        <FaRegCopy />
+                      </span>
+                      <span className="text-blue-500 mt-[-2px]">
+                        Copy Address
+                      </span>
+                    </div>
                   </div>
                 </div>
                 {timeLeft && (
