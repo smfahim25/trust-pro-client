@@ -3,25 +3,27 @@ import Header from "../Header/Header";
 import axios from "axios";
 import { useUser } from "../../context/UserContext";
 import useGetAllConversation from "../../hooks/useGetAllConversation";
-import {API_BASE_URL} from "../../api/getApiURL";
+import { API_BASE_URL } from "../../api/getApiURL";
 import { IoSend } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
-import debounce from "lodash.debounce"; 
+import debounce from "lodash.debounce";
 import useListenMessages from "../../hooks/useListenMessages";
 import useConversation from "../../zustand/useConversation";
 import useGetMessages from "../../hooks/useGetMessages";
+import { differenceInHours, format, formatDistanceToNow } from "date-fns";
 
 const ChatComponent = () => {
   const [message, setMessage] = useState("");
   const { user } = useUser();
   const { data } = useGetAllConversation(user.id);
-  const { selectedConversation,setSelectedConversation,setMessages } = useConversation();
+  const { selectedConversation, setSelectedConversation, setMessages } =
+    useConversation();
   const { messages } = useGetMessages();
   useListenMessages();
 
   // Create refs for the chat container and file input
   const chatEndRef = useRef(null);
-  const fileInputRef = useRef(null);
+  // const fileInputRef = useRef(null);
 
   // Function to scroll to the bottom of the chat
   const scrollToBottom = () => {
@@ -31,9 +33,8 @@ const ChatComponent = () => {
   };
 
   useEffect(() => {
-    if(data){
-    setSelectedConversation(data[0]);
-      
+    if (data) {
+      setSelectedConversation(data[0]);
     }
   }, [data]);
 
@@ -54,12 +55,15 @@ const ChatComponent = () => {
       userId: user.id,
       recipientId: 0,
       messageText: message,
-      senderType:'user',
+      senderType: "user",
     };
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/messages/send`, messageData);
-      if(response && !selectedConversation){
+      const response = await axios.post(
+        `${API_BASE_URL}/messages/send`,
+        messageData
+      );
+      if (response && !selectedConversation) {
         setSelectedConversation(response?.data);
       }
       setMessages([...messages, response?.data]);
@@ -83,17 +87,17 @@ const ChatComponent = () => {
     }
   };
 
-  const getFormattedDeliveryTime = (createdAt) => {
-    const date = new Date(createdAt);
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const hoursDifference = differenceInHours(new Date(), date);
 
-    // Convert date to local time string
-    const localDateTime = date.toLocaleString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-
-    return localDateTime.replace(",", "");
+    if (hoursDifference >= 1) {
+      // Show relative time if more than 1 hour ago
+      return formatDistanceToNow(date, { addSuffix: true });
+    } else {
+      // Show exact time if within the last hour
+      return format(date, "hh:mm a");
+    }
   };
 
   return (
@@ -101,12 +105,13 @@ const ChatComponent = () => {
       <Header pageTitle="Live Chat" />
       <hr className="" />
       <div className="h-[83vh] overflow-y-auto">
-      {messages ? (
+        {messages ? (
           messages?.map((message, index) => {
             const isCurrentUser = message?.sender_id === user.id;
             const previousMessage = messages[index - 1];
             const showLabel =
-              !previousMessage || previousMessage.sender_id !== message.sender_id;
+              !previousMessage ||
+              previousMessage.sender_id !== message.sender_id;
 
             return (
               <div key={message?.id} className="grid pb-1 px-2">
@@ -125,7 +130,7 @@ const ChatComponent = () => {
                       </div>
                       <div className="justify-start items-center inline-flex">
                         <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
-                          {getFormattedDeliveryTime(message?.created_at)}
+                          {formatTime(message?.created_at)}
                         </h3>
                       </div>
                     </div>
@@ -146,7 +151,7 @@ const ChatComponent = () => {
                         </div>
                         <div className="justify-end items-center inline-flex mb-2.5">
                           <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">
-                            {getFormattedDeliveryTime(message?.created_at)}
+                            {formatTime(message?.created_at)}
                           </h6>
                         </div>
                       </div>
@@ -156,10 +161,10 @@ const ChatComponent = () => {
               </div>
             );
           })
-      ):(
-        <p className="text-center">Write your message how can we help</p>
-      )}
-       
+        ) : (
+          <p className="text-center">Write your message how can we help</p>
+        )}
+
         {/* Ref to capture the end of the chat */}
         <div ref={chatEndRef} />
       </div>
@@ -190,7 +195,7 @@ const ChatComponent = () => {
             style={{ display: "none" }} // Hide the file input
           /> */}
           <button onClick={handleSendMessage}>
-            <IoSend />
+            <IoSend title="send" />
           </button>
         </div>
       </div>
