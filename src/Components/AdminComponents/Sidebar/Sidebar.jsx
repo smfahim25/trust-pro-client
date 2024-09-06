@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUser } from "../../../context/UserContext";
 import { FaSignOutAlt, FaUser, FaUsers, FaWallet } from "react-icons/fa";
@@ -6,12 +6,46 @@ import { MdDashboard } from "react-icons/md";
 import { GrTransaction } from "react-icons/gr";
 import { IoChatbox, IoSettingsSharp } from "react-icons/io5";
 import { PiHandDepositFill, PiHandWithdrawFill } from "react-icons/pi";
+import { useSocketContext } from "../../../context/SocketContext";
+import axios from "axios";
+import { API_BASE_URL } from "../../../api/getApiURL";
 
 const Sidebar = () => {
   const { adminUser, logout } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [unreadConv, setUnreadConv] = useState(null);
+  const { socket } = useSocketContext();
+  //   const { messages, setMessages } = useConversation();
+  
+    const fetchConversations = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/conversation/`);
+        setUnreadConv(response.data.unreadConversationsCount);
+      } catch (error) {
+        console.error("Error fetching conversations:", error);
+      }
+    };
+
+    useEffect(() => {
+     
+
+      fetchConversations();
+      const handleNewMessage = (newMessage) => {
+        // const sound = new Audio(notificationSound);
+        // sound.play().catch((error) => {
+        //   console.warn("Notification sound could not be played:", error);
+        // });
+        setUnreadConv(newMessage?.unreadConversationsCount)
+        console.log("geting new conver: ",newMessage);
+        
+      };
+  
+      socket?.on("getUnreadMessage", handleNewMessage);
+  
+      return () => socket?.off("getUnreadMessage", handleNewMessage);
+    }, [socket]);
 
   const handleSignOut = () => {
     logout();
@@ -149,6 +183,12 @@ const Sidebar = () => {
                   >
                     {option.iconPath}
                     <span className="text-[16px]">{option.label}</span>
+                    {unreadConv && option.label === "Inbox" && (
+                      <span class="inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
+                      {unreadConv}
+                      </span>
+                    )}
+                    
                   </Link>
                 </li>
               )

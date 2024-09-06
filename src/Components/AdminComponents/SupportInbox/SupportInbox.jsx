@@ -8,6 +8,7 @@ import useGetMessages from "../../../hooks/useGetMessages";
 import useConversation from "../../../zustand/useConversation";
 import { format, formatDistanceToNow, differenceInHours } from "date-fns";
 import { FaReply } from "react-icons/fa";
+import useListenConversation from "../../../hooks/useListenConversation";
 
 const SupportInbox = () => {
   const { adminUser } = useUser();
@@ -18,6 +19,7 @@ const SupportInbox = () => {
     useConversation();
   const { messages, loading } = useGetMessages();
   useListenMessages();
+  // useListenConversation();
 
   // Ref for scrolling to the bottom
   const chatEndRef = useRef(null);
@@ -38,7 +40,7 @@ const SupportInbox = () => {
   const fetchConversations = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/conversation/`);
-      setConversations(response.data);
+      setConversations(response.data.conversations);
     } catch (error) {
       console.error("Error fetching conversations:", error);
     }
@@ -100,7 +102,14 @@ const SupportInbox = () => {
               onClick={() => handleFetchConversation(conv)}
             >
               <div className="flex justify-between">
-                <p>{conv?.user1_name || conv?.user1_uuid}</p>
+                <p>
+                  {conv?.user1_name || conv?.user1_uuid}
+                  {conv.unread_count >0 && (
+                      <span class="inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
+                      {conv.unread_count}
+                      </span>
+                    )}
+                </p> 
                 <p
                   className={`text-xs ${
                     checkOnlineStatus(conv.user1_id)
