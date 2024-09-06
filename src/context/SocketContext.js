@@ -5,41 +5,37 @@ import { apiURL } from "../api/getApiURL";
 const SocketContext = createContext();
 
 export const SocketContextProvider = ({ children }) => {
-const [socket, setSocket] = useState(null);
-const [onlineUsers, setOnlineUsers] = useState(null);
-const {user,adminUser} = useUser();
-
+  const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState(null);
+  const { user, adminUser } = useUser();
 
   useEffect(() => {
-    if(user || adminUser){
-        const socket = io(apiURL,{
-            query:{
-              userId:user?.id || 0,
-            }
-        });
-        setSocket(socket);
+    if (user || adminUser) {
+      const socket = io(apiURL, {
+        query: {
+          userId: user?.id || 0,
+        },
+      });
+      setSocket(socket);
 
-        socket.on("getOnlineUsers",(users)=>{
-          setOnlineUsers(users);
-        })
+      socket.on("getOnlineUsers", (users) => {
+        setOnlineUsers(users);
+      });
 
-        return ()=> socket.close();
-    }else{
-        if(socket){
-            socket.close();
-            setSocket(null);
-        }
-
+      return () => socket.close();
+    } else {
+      if (socket) {
+        socket.close();
+        setSocket(null);
+      }
     }
-   
-  }, [user,adminUser]);
-
+  }, [user, adminUser]);
 
   return (
     <SocketContext.Provider
       value={{
         socket,
-        onlineUsers
+        onlineUsers,
       }}
     >
       {children}

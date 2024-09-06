@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { useSocketContext } from "../context/SocketContext";
-import useConversation from "../zustand/useConversation";
 import notificationSound from "../Assets/sound/notification.mp3";
 
 const useListenConversation = () => {
   const { socket } = useSocketContext();
-//   const { messages, setMessages } = useConversation();
+  //   const { messages, setMessages } = useConversation();
 
   useEffect(() => {
     const handleNewMessage = (newMessage) => {
@@ -13,8 +12,7 @@ const useListenConversation = () => {
       sound.play().catch((error) => {
         console.warn("Notification sound could not be played:", error);
       });
-      console.log("geting new conver: ",newMessage);
-      
+      console.log("geting new conver: ", newMessage);
     };
 
     socket?.on("getUnreadMessage", handleNewMessage);

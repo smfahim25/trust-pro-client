@@ -26,12 +26,14 @@ import Login from "./Components/Auth/Login";
 import Register from "./Components/Auth/Register";
 import NotFound from "./Components/NotFound/NotFound";
 import ChatComponent from "./Components/ChatComponent/ChatComponent";
+import useListenMessages from "./hooks/useListenMessages";
 
 function App() {
   const [account, setAccount] = useState(null);
   const { user, loading } = useUser();
   const [isChatVisible, setChatVisible] = useState(false);
   const location = useLocation(); // Get current location
+  useListenMessages();
 
   useEffect(() => {
     if (!window.location.hash) {

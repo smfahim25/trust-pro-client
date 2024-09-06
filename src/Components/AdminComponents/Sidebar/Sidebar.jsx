@@ -14,43 +14,41 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [unreadConv, setUnreadConv] = useState(null);
+  const [unreadConv, setUnreadConv] = useState(0); // Initialize as 0
   const { socket } = useSocketContext();
-  //   const { messages, setMessages } = useConversation();
-  
-    const fetchConversations = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/conversation/`);
-        setUnreadConv(response.data.unreadConversationsCount);
-      } catch (error) {
-        console.error("Error fetching conversations:", error);
-      }
+
+  // Fetch unread conversations count from API
+  const fetchConversations = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/conversation/`);
+      setUnreadConv(response.data.unreadConversationsCount);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchConversations(); // Fetch initial unread conversation count
+
+    // Socket listener for new messages/unread count
+    const handleNewMessage = (newMessage) => {
+      setUnreadConv(newMessage?.unreadConversationsCount || 0); // Update unread count
+      console.log("New conversation received: ", newMessage);
     };
+    // Subscribe to socket event
+    socket?.on("getUnreadMessage", handleNewMessage);
 
-    useEffect(() => {
-     
+    // Cleanup socket listener when component unmounts
+    return () => socket?.off("getUnreadMessage", handleNewMessage);
+  }, [socket]); // Re-run effect if `socket` changes
 
-      fetchConversations();
-      const handleNewMessage = (newMessage) => {
-        // const sound = new Audio(notificationSound);
-        // sound.play().catch((error) => {
-        //   console.warn("Notification sound could not be played:", error);
-        // });
-        setUnreadConv(newMessage?.unreadConversationsCount)
-        console.log("geting new conver: ",newMessage);
-        
-      };
-  
-      socket?.on("getUnreadMessage", handleNewMessage);
-  
-      return () => socket?.off("getUnreadMessage", handleNewMessage);
-    }, [socket]);
-
+  // Sign out handler
   const handleSignOut = () => {
     logout();
     navigate("/admin-login");
   };
 
+  // Toggle sidebar (mobile)
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -74,14 +72,12 @@ const Sidebar = () => {
       iconPath: <IoChatbox size={20} />,
       roles: ["superadmin"],
     },
-
     {
       to: "/cradmin/live-support",
       label: "Inbox",
       iconPath: <IoChatbox size={20} />,
       roles: ["admin", "superadmin"],
     },
-
     {
       to: "/cradmin/wallets",
       label: "Wallets",
@@ -182,12 +178,11 @@ const Sidebar = () => {
                   >
                     {option.iconPath}
                     <span className="text-[16px]">{option.label}</span>
-                    {unreadConv && option.label === "Inbox" && (
-                      <span class="inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
-                      {unreadConv}
+                    {unreadConv > 0 && option.label === "Inbox" && (
+                      <span className="inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
+                        {unreadConv}
                       </span>
                     )}
-                    
                   </Link>
                 </li>
               )
