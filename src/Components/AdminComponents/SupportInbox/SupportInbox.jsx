@@ -19,6 +19,7 @@ const SupportInbox = () => {
   const formData = new FormData();
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null); // For full-screen view
   const { selectedConversation, setSelectedConversation, setMessages } =
     useConversation();
   const { messages } = useGetMessages();
@@ -31,12 +32,12 @@ const SupportInbox = () => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-      setFilePreview(URL.createObjectURL(selectedFile)); 
+      setFilePreview(URL.createObjectURL(selectedFile));
     }
   };
 
-   // Remove selected image
-   const removeSelectedImage = () => {
+  // Remove selected image
+  const removeSelectedImage = () => {
     setFile(null);
     setFilePreview(""); // Clear the file and preview
     fileInputRef.current.value = null; // Reset file input
@@ -73,17 +74,20 @@ const SupportInbox = () => {
   };
 
   const sendReply = async () => {
-    if (replyText.trim() === "" || !selectedConversation) return;
+    if (replyText.trim() === "" && !selectedConversation && !file) return;
     formData.append("userId", adminUser.id);
     formData.append("recipientId", selectedConversation?.user1_id);
     formData.append("messageText", replyText);
-    formData.append("senderType","admin");
-    if(file){
-      formData.append("documents",file);
+    formData.append("senderType", "admin");
+    if (file) {
+      formData.append("documents", file);
     }
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/messages/send`,formData);
+      const response = await axios.post(
+        `${API_BASE_URL}/messages/send`,
+        formData
+      );
       setMessages([...messages, response?.data]);
       setReplyText("");
       setFile(null);
@@ -133,6 +137,16 @@ const SupportInbox = () => {
   const filteredMessages = messages?.filter(
     (msg) => msg.conversation_id === selectedConversation?.conversation_id
   );
+
+  // Show full-screen image
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+  };
+
+  // Close full-screen modal
+  const closeModal = () => {
+    setSelectedImage(null);
+  };
 
   return (
     <div className="flex">
@@ -184,17 +198,28 @@ const SupportInbox = () => {
                     {isAdmin ? (
                       <div className="flex gap-2.5 justify-end pb-1">
                         <div>
-                          <div className="px-3 py-2 bg-indigo-500 rounded">
-                            <h2 className="text-white text-sm font-normal leading-snug">
-                              {msg.message_text}
-                            </h2>
-                          </div>
-                          <div className="justify-end items-center inline-flex">
+                          {msg.message_text && (
+                            <div className="px-3 py-2 bg-indigo-500 rounded">
+                              <h2 className="text-white text-sm font-normal leading-snug">
+                                {msg.message_text}
+                              </h2>
+                            </div>
+                          )}
                           {msg?.message_image && (
-                        <img className="w-[50%] h-[50%] mt-1" src={`${API_BASE_URL}/${msg?.message_image}`} alt="" />
-                      )}
-                          </div>
-                         
+                            <div className="justify-end items-center inline-flex">
+                              <img
+                                className="w-[50%] h-[50%] mt-1"
+                                src={`${API_BASE_URL}/${msg?.message_image}`}
+                                alt=""
+                                onClick={() =>
+                                  handleImageClick(
+                                    `${API_BASE_URL}/${msg?.message_image}`
+                                  )
+                                }
+                              />
+                            </div>
+                          )}
+
                           <div className="justify-start items-center inline-flex">
                             <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
                               {formatTime(msg.created_at)}
@@ -206,14 +231,25 @@ const SupportInbox = () => {
                       <div className="flex gap-2.5">
                         <div className="grid">
                           <div className="w-full flex flex-col">
-                            <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
-                              <h5 className="text-gray-900 text-sm font-normal leading-snug">
-                                {msg.message_text}
-                              </h5>
-                            </div>
+                            {msg.message_text && (
+                              <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
+                                <h5 className="text-gray-900 text-sm font-normal leading-snug">
+                                  {msg.message_text}
+                                </h5>
+                              </div>
+                            )}
                             {msg?.message_image && (
-                        <img className="w-[50%] h-[50%] mt-1" src={`${API_BASE_URL}/${msg?.message_image}`} alt="" />
-                      )}
+                              <img
+                                className="w-[50%] h-[50%] mt-1"
+                                src={`${API_BASE_URL}/${msg?.message_image}`}
+                                alt=""
+                                onClick={() =>
+                                  handleImageClick(
+                                    `${API_BASE_URL}/${msg?.message_image}`
+                                  )
+                                }
+                              />
+                            )}
                             <div className="justify-end items-center inline-flex mb-2.5">
                               <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">
                                 {formatTime(msg.created_at)}
@@ -229,20 +265,20 @@ const SupportInbox = () => {
               <div ref={chatEndRef} />
             </div>
             <div className="relative w-full pl-3 pr-1 py-1 px-2 rounded-3xl border border-gray-200 items-center gap-2 inline-flex">
-               {/* Floating Image Preview */}
+              {/* Floating Image Preview */}
               {filePreview && (
-                <div className="absolute top-[-138px] left-0 right-0 flex justify-center">
-                  <div className="relative w-[120px] h-[120px] bg-white shadow-lg rounded-lg p-2">
+                <div className="absolute top-[-152px] left-0 right-0 flex justify-center">
+                  <div className="relative w-[150px] h-[150px] bg-white shadow-lg rounded-lg p-3">
                     <span
-                      className="absolute top-1 right-1 text-gray-500 p-1 bg-black"
+                      className="absolute top-1 right-1 text-gray-600 cursor-pointer"
                       onClick={removeSelectedImage}
                     >
-                      <IoClose size={20} className="text-white"/>
+                      <IoClose size={16} />
                     </span>
                     <img
                       src={filePreview}
                       alt="Preview"
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover rounded-md"
                     />
                   </div>
                 </div>
@@ -258,7 +294,7 @@ const SupportInbox = () => {
                   className="w-full grow shrink basis-0 text-black text-xs font-medium leading-4 focus:outline-none h-[20px]"
                 />
               </div>
-             
+
               <div className="flex items-center gap-2">
                 <ImAttachment
                   size={20}
@@ -271,12 +307,12 @@ const SupportInbox = () => {
                   onChange={handleFileChange}
                   style={{ display: "none" }} // Hide the file input
                 />
-                  <button
-                      onClick={sendReply}
-                      className="ml-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex"
-                    >
-                      <FaReply title="reply" />
-                  </button>
+                <button
+                  onClick={sendReply}
+                  className="ml-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex"
+                >
+                  <FaReply title="reply" />
+                </button>
               </div>
             </div>
           </>
@@ -286,6 +322,28 @@ const SupportInbox = () => {
           </div>
         )}
       </div>
+      {/* Full-Screen Image Modal */}
+      {selectedImage && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex justify-center items-center z-50">
+          <div className="relative w-full h-full flex justify-center items-center">
+            <img
+              src={selectedImage}
+              alt="Full-size"
+              className="max-w-[90%] max-h-[90%] object-contain"
+            />
+            {/* Close Button */}
+            <button
+              className="absolute top-4 right-4 text-white bg-gray-800 rounded-full px-4"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevents closing the modal when clicking the button
+                closeModal();
+              }}
+            >
+              <IoClose size={24} className="mt-2" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -4,10 +4,8 @@ import axios from "axios";
 import { useUser } from "../../context/UserContext";
 import useGetAllConversation from "../../hooks/useGetAllConversation";
 import { API_BASE_URL } from "../../api/getApiURL";
-import { IoSend } from "react-icons/io5";
-import { IoClose } from "react-icons/io5";
+import { IoSend, IoClose } from "react-icons/io5";
 import { ImAttachment } from "react-icons/im";
-import { CgProfile } from "react-icons/cg";
 import debounce from "lodash.debounce";
 import useListenMessages from "../../hooks/useListenMessages";
 import useConversation from "../../zustand/useConversation";
@@ -19,6 +17,7 @@ const ChatComponent = () => {
   const formData = new FormData();
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null); // For full-screen view
   const { user } = useUser();
   const { data } = useGetAllConversation(user.id);
   const { selectedConversation, setSelectedConversation, setMessages } =
@@ -26,7 +25,7 @@ const ChatComponent = () => {
   const { messages } = useGetMessages();
   useListenMessages();
 
-  // Create refs for the chat container and file input
+  // Refs for chat end and file input
   const chatEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -34,29 +33,25 @@ const ChatComponent = () => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-      setFilePreview(URL.createObjectURL(selectedFile)); 
+      setFilePreview(URL.createObjectURL(selectedFile));
     }
   };
 
-   // Remove selected image
-   const removeSelectedImage = () => {
+  // Remove selected image
+  const removeSelectedImage = () => {
     setFile(null);
-    setFilePreview(""); // Clear the file and preview
+    setFilePreview("");
     fileInputRef.current.value = null; // Reset file input
   };
 
-  // Handles the attachment icon click to open the hidden file input
+  // Open file input
   const handleAttachmentClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click(); // trigger file input
-    }
+    fileInputRef.current.click();
   };
 
-  // Function to scroll to the bottom of the chat
+  // Scroll to bottom of the chat
   const scrollToBottom = () => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -66,7 +61,6 @@ const ChatComponent = () => {
   }, [data, setSelectedConversation]);
 
   useEffect(() => {
-    // Scroll to bottom when the messages state is updated
     scrollToBottom();
   }, [messages]);
 
@@ -74,22 +68,15 @@ const ChatComponent = () => {
     setMessage(e.target.value);
   };
 
-  // Define sendMessage without dependencies
   const sendMessage = async () => {
-    if (message.trim() === "") return; // Don't send empty messages
+    if (message.trim() === "" && !file) return;
     formData.append("userId", user.id);
-    formData.append("recipientId",0);
+    formData.append("recipientId", 0);
     formData.append("messageText", message);
-    formData.append("senderType","user");
-    if(file){
-      formData.append("documents",file);
+    formData.append("senderType", "user");
+    if (file) {
+      formData.append("documents", file);
     }
-    // const messageData = {
-    //   userId: user.id,
-    //   recipientId: 0,
-    //   messageText: message,
-    //   senderType: "user",
-    // };
 
     try {
       const response = await axios.post(
@@ -124,15 +111,27 @@ const ChatComponent = () => {
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    const hoursDifference = differenceInHours(new Date(), date);
+    const now = new Date();
+    const secondsDifference = Math.floor((now - date) / 1000); // Difference in seconds
 
-    if (hoursDifference >= 1) {
-      // Show relative time if more than 1 hour ago
-      return formatDistanceToNow(date, { addSuffix: true });
-    } else {
-      // Show exact time if within the last hour
-      return format(date, "hh:mm a");
+    if (secondsDifference < 60) {
+      return "just now"; // Show "just now" if less than a minute
     }
+
+    const hoursDifference = differenceInHours(now, date);
+    return hoursDifference >= 1
+      ? formatDistanceToNow(date, { addSuffix: true })
+      : format(date, "hh:mm a");
+  };
+
+  // Show full-screen image
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+  };
+
+  // Close full-screen modal
+  const closeModal = () => {
+    setSelectedImage(null);
   };
 
   return (
@@ -158,19 +157,27 @@ const ChatComponent = () => {
                           You
                         </h5>
                       )}
-                      <div className="px-3 py-2 bg-indigo-500 rounded">
-                        <h2 className="text-white text-sm font-normal leading-snug">
-                          {message?.message_text}
-                        </h2>
-                      </div>
-                      <div className="justify-end items-center inline-flex">
-                      {message?.message_image && (
-                        <img className="w-[50%] h-[50%] leading-4 mt-1" src={`${API_BASE_URL}/${message?.message_image}`} alt="" />
+                      {message?.message_text && (
+                        <div className="px-3 py-2 bg-indigo-500 rounded">
+                          <h2 className="text-white text-sm font-normal leading-snug">
+                            {message?.message_text}
+                          </h2>
+                        </div>
                       )}
-                      </div>
-
-                     
-                     
+                      {message?.message_image && (
+                        <div className="justify-end items-center inline-flex">
+                          <img
+                            className="w-[80%] leading-4 mt-1 cursor-pointer"
+                            src={`${API_BASE_URL}/${message?.message_image}`}
+                            alt=""
+                            onClick={() =>
+                              handleImageClick(
+                                `${API_BASE_URL}/${message?.message_image}`
+                              )
+                            }
+                          />
+                        </div>
+                      )}
                       <div className="justify-start items-center inline-flex">
                         <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
                           {formatTime(message?.created_at)}
@@ -187,14 +194,25 @@ const ChatComponent = () => {
                         </h5>
                       )}
                       <div className="w-full flex flex-col">
-                        <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
-                          <h5 className="text-gray-900 text-sm font-normal leading-snug">
-                            {message?.message_text}
-                          </h5>
-                        </div>
+                        {message?.message_text && (
+                          <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
+                            <h5 className="text-gray-900 text-sm font-normal leading-snug">
+                              {message?.message_text}
+                            </h5>
+                          </div>
+                        )}
                         {message?.message_image && (
-                        <img className="w-[50%] h-[50%] mt-1" src={`${API_BASE_URL}/${message?.message_image}`} alt="" />
-                      )}
+                          <img
+                            className="w-[80%] mt-1 cursor-pointer"
+                            src={`${API_BASE_URL}/${message?.message_image}`}
+                            alt=""
+                            onClick={() =>
+                              handleImageClick(
+                                `${API_BASE_URL}/${message?.message_image}`
+                              )
+                            }
+                          />
+                        )}
                         <div className="justify-end items-center inline-flex mb-2.5">
                           <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">
                             {formatTime(message?.created_at)}
@@ -227,54 +245,76 @@ const ChatComponent = () => {
       </div>
 
       <div className="relative w-full pl-3 pr-1 py-1 px-2 rounded-3xl border border-gray-200 items-center gap-2 inline-flex">
-         {/* Floating Image Preview */}
-      {filePreview && (
-        <div className="absolute top-[-138px] left-0 right-0 flex justify-center">
-          <div className="relative w-[120px] h-[120px] bg-white shadow-lg rounded-lg p-2">
-            <span
-              className="absolute top-1 right-1 text-gray-500 p-1 bg-black"
-              onClick={removeSelectedImage}
-            >
-              <IoClose size={20} className="text-white"/>
-            </span>
+        {/* Floating Image Preview */}
+        {filePreview && (
+          <div className="absolute top-[-138px] left-0 right-0 flex justify-center">
+            <div className="relative w-[120px] h-[120px] bg-white shadow-lg rounded-lg p-2">
+              <span
+                className="absolute top-1 right-1 text-gray-600 cursor-pointer"
+                onClick={removeSelectedImage}
+              >
+                <IoClose size={16} />
+              </span>
+              <img
+                src={filePreview}
+                alt="Preview"
+                className="w-full h-full object-cover rounded-md"
+              />
+            </div>
+          </div>
+        )}
+
+        <span
+          className="cursor-pointer mr-1 text-xl text-gray-700"
+          onClick={handleAttachmentClick}
+        >
+          <ImAttachment />
+        </span>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+        <input
+          type="text"
+          placeholder="Message"
+          value={message}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          className="w-full px-2 py-1 border-none outline-none bg-transparent text-sm font-normal"
+        />
+        <button
+          onClick={handleSendMessage}
+          className="h-[40px] rounded-full flex justify-center items-center "
+        >
+          <IoSend className="text-white" />
+        </button>
+      </div>
+
+      {/* Full-Screen Image Modal */}
+      {selectedImage && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 flex justify-center items-center z-50">
+          <div className="relative w-full h-full flex justify-center items-center">
             <img
-              src={filePreview}
-              alt="Preview"
-              className="w-full h-full object-cover rounded-lg"
+              src={selectedImage}
+              alt="Full-size"
+              className="max-w-[90%] max-h-[90%] object-contain"
             />
+            {/* Close Button */}
+            <button
+              className="absolute top-4 right-4 text-white bg-gray-800 rounded-full px-4"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevents closing the modal when clicking the button
+                closeModal();
+              }}
+            >
+              <IoClose size={24} className="mt-2" />
+            </button>
           </div>
         </div>
       )}
-
-        <div className="flex items-center gap-2">
-          <CgProfile size={25} />
-        </div>
-        <div className="w-full">
-          <input
-            className="w-full grow shrink basis-0 text-black text-xs font-medium leading-4 focus:outline-none h-[20px]"
-            placeholder="Type here..."
-            value={message}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <ImAttachment
-            size={20}
-            onClick={handleAttachmentClick}
-            className="cursor-pointer"
-          />
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            style={{ display: "none" }} // Hide the file input
-          />
-          <button onClick={handleSendMessage}>
-            <IoSend title="send" />
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
