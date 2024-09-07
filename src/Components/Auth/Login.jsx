@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../api/getApiURL";
 import { useUser } from "../../context/UserContext";
 import { toast } from "react-toastify";
+import useConversation from "../../zustand/useConversation";
 
 const Login = () => {
   const { setUser, setLoading } = useUser();
@@ -14,6 +15,7 @@ const Login = () => {
     password: "",
     remember: false,
   });
+  const { setSelectedConversation, setMessages } = useConversation();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -35,11 +37,15 @@ const Login = () => {
       if (userData.role === "user" && userData?.status === "active") {
         setLoading(false);
         setUser(userData);
+        setMessages([]);
+        setSelectedConversation(null);
         toast.success("Login successful!");
         navigate("/");
       } else if (userData?.status === "active") {
         setLoading(false);
         setUser(userData);
+        setMessages([]);
+        setSelectedConversation(null);
         toast.success("Login successful!");
         navigate("/");
       }
