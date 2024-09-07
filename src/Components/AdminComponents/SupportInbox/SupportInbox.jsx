@@ -189,9 +189,12 @@ const SupportInbox = () => {
                               {msg.message_text}
                             </h2>
                           </div>
+                          <div className="justify-end items-center inline-flex">
                           {msg?.message_image && (
                         <img className="w-[50%] h-[50%] mt-1" src={`${API_BASE_URL}/${msg?.message_image}`} alt="" />
                       )}
+                          </div>
+                         
                           <div className="justify-start items-center inline-flex">
                             <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
                               {formatTime(msg.created_at)}
