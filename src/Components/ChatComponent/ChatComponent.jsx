@@ -36,7 +36,7 @@ const ChatComponent = () => {
     if (data) {
       setSelectedConversation(data[0]);
     }
-  }, [data]);
+  }, [data, setSelectedConversation]);
 
   useEffect(() => {
     // Scroll to bottom when the messages state is updated
@@ -105,64 +105,76 @@ const ChatComponent = () => {
       <Header pageTitle="Live Chat" />
       <hr className="" />
       <div className="h-[83vh] overflow-y-auto">
-      {messages && messages.length > 0 ? (
-        messages.map((message, index) => {
-          const isCurrentUser = message?.sender_id === user.id;
-          const previousMessage = messages[index - 1];
-          const showLabel =
-            !previousMessage || previousMessage.sender_id !== message.sender_id;
+        {messages && messages.length > 0 ? (
+          messages.map((message, index) => {
+            const isCurrentUser = message?.sender_id === user.id;
+            const previousMessage = messages[index - 1];
+            const showLabel =
+              !previousMessage ||
+              previousMessage.sender_id !== message.sender_id;
 
-          return (
-            <div key={message?.id} className="grid pb-1 px-2">
-              {isCurrentUser ? (
-                <div className="flex gap-2.5 justify-end pb-1">
-                  <div>
-                    {showLabel && (
-                      <h5 className="text-right text-gray-900 text-sm font-semibold leading-snug pb-1">
-                        You
-                      </h5>
-                    )}
-                    <div className="px-3 py-2 bg-indigo-500 rounded">
-                      <h2 className="text-white text-sm font-normal leading-snug">
-                        {message?.message_text}
-                      </h2>
-                    </div>
-                    <div className="justify-start items-center inline-flex">
-                      <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
-                        {formatTime(message?.created_at)} {message?.seen}
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex gap-2.5">
-                  <div className="grid">
-                    {showLabel && (
-                      <h5 className="text-gray-900 text-sm font-semibold leading-snug pb-1">
-                        Support Admin
-                      </h5>
-                    )}
-                    <div className="w-full flex flex-col">
-                      <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
-                        <h5 className="text-gray-900 text-sm font-normal leading-snug">
-                          {message?.message_text}
+            return (
+              <div key={message?.id} className="grid pb-1 px-2">
+                {isCurrentUser ? (
+                  <div className="flex gap-2.5 justify-end pb-1">
+                    <div>
+                      {showLabel && (
+                        <h5 className="text-right text-gray-900 text-sm font-semibold leading-snug pb-1">
+                          You
                         </h5>
+                      )}
+                      <div className="px-3 py-2 bg-indigo-500 rounded">
+                        <h2 className="text-white text-sm font-normal leading-snug">
+                          {message?.message_text}
+                        </h2>
                       </div>
-                      <div className="justify-end items-center inline-flex mb-2.5">
-                        <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">
+                      <div className="justify-start items-center inline-flex">
+                        <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
                           {formatTime(message?.created_at)}
-                        </h6>
+                        </h3>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="flex gap-2.5">
+                    <div className="grid">
+                      {showLabel && (
+                        <h5 className="text-gray-900 text-sm font-semibold leading-snug pb-1">
+                          Support Admin
+                        </h5>
+                      )}
+                      <div className="w-full flex flex-col">
+                        <div className="px-3.5 py-2 bg-gray-100 rounded justify-start items-center gap-3 inline-flex break-normal flex-wrap">
+                          <h5 className="text-gray-900 text-sm font-normal leading-snug">
+                            {message?.message_text}
+                          </h5>
+                        </div>
+                        <div className="justify-end items-center inline-flex mb-2.5">
+                          <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">
+                            {formatTime(message?.created_at)}
+                          </h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <div className="flex flex-col justify-center items-center h-[50vh]">
+            <div className="">
+              <img
+                src="/avatar.jpg"
+                alt="User Avatar"
+                className="rounded-full h-[150px] w-[150px]"
+              />
             </div>
-          );
-        })
-      ) : (
-        <p className="text-center">Write your question briefly, how can we help?</p>
-      )}
+            <p className="text-center text-lg font-semibold">
+              Write your question briefly, how can we help?
+            </p>
+          </div>
+        )}
 
         {/* Ref to capture the end of the chat */}
         <div ref={chatEndRef} />

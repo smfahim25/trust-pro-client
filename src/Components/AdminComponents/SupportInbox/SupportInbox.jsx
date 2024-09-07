@@ -16,7 +16,7 @@ const SupportInbox = () => {
   const [replyText, setReplyText] = useState("");
   const { selectedConversation, setSelectedConversation, setMessages } =
     useConversation();
-  const { messages, loading } = useGetMessages();
+  const { messages } = useGetMessages();
   useListenMessages();
 
   const chatEndRef = useRef(null);
@@ -27,12 +27,11 @@ const SupportInbox = () => {
     }
   };
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     if (messages && selectedConversation) {
       scrollToBottom();
     }
+
     fetchConversations();
   }, [messages, selectedConversation]);
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {API_BASE_URL} from "../../../api/getApiURL";
+import { API_BASE_URL } from "../../../api/getApiURL";
 
 const AddNewWallet = () => {
   const coinAPI = "https://api.coinlore.net/api/tickers/?limit=50";
@@ -89,8 +89,8 @@ const AddNewWallet = () => {
   };
 
   return (
-    <div class="card bg-white">
-      <div class="card-body">
+    <div className="card bg-white">
+      <div className="card-body">
         <h2 className="mx-5 py-3 text-lg font-semibold">Add a new wallet</h2>
         <div className="container mx-auto p-4">
           <form

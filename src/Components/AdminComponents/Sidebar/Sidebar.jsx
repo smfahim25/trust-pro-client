@@ -28,19 +28,16 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    fetchConversations(); // Fetch initial unread conversation count
-
-    // Socket listener for new messages/unread count
+    fetchConversations();
     const handleNewMessage = (newMessage) => {
       setUnreadConv(newMessage?.unreadConversationsCount || 0); // Update unread count
       console.log("New conversation received: ", newMessage);
     };
-    // Subscribe to socket event
+
     socket?.on("getUnreadMessage", handleNewMessage);
 
-    // Cleanup socket listener when component unmounts
     return () => socket?.off("getUnreadMessage", handleNewMessage);
-  }, [socket]); // Re-run effect if `socket` changes
+  }, [socket]);
 
   // Sign out handler
   const handleSignOut = () => {
