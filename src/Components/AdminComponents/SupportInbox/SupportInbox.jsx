@@ -8,18 +8,46 @@ import useGetMessages from "../../../hooks/useGetMessages";
 import useConversation from "../../../zustand/useConversation";
 import { format, formatDistanceToNow, differenceInHours } from "date-fns";
 import { FaReply } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
+import { ImAttachment } from "react-icons/im";
 
 const SupportInbox = () => {
   const { adminUser } = useUser();
   const { onlineUsers } = useSocketContext();
   const [conversations, setConversations] = useState([]);
   const [replyText, setReplyText] = useState("");
+  const formData = new FormData();
+  const [file, setFile] = useState(null);
+  const [filePreview, setFilePreview] = useState("");
   const { selectedConversation, setSelectedConversation, setMessages } =
     useConversation();
   const { messages } = useGetMessages();
   useListenMessages();
 
   const chatEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setFilePreview(URL.createObjectURL(selectedFile)); 
+    }
+  };
+
+   // Remove selected image
+   const removeSelectedImage = () => {
+    setFile(null);
+    setFilePreview(""); // Clear the file and preview
+    fileInputRef.current.value = null; // Reset file input
+  };
+
+  // Handles the attachment icon click to open the hidden file input
+  const handleAttachmentClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click(); // trigger file input
+    }
+  };
 
   const scrollToBottom = () => {
     if (chatEndRef.current) {
@@ -46,16 +74,20 @@ const SupportInbox = () => {
 
   const sendReply = async () => {
     if (replyText.trim() === "" || !selectedConversation) return;
+    formData.append("userId", adminUser.id);
+    formData.append("recipientId", selectedConversation?.user1_id);
+    formData.append("messageText", replyText);
+    formData.append("senderType","admin");
+    if(file){
+      formData.append("documents",file);
+    }
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/messages/send`, {
-        userId: adminUser.id, // Admin user ID
-        recipientId: selectedConversation?.user1_id,
-        messageText: replyText,
-        senderType: "admin",
-      });
+      const response = await axios.post(`${API_BASE_URL}/messages/send`,formData);
       setMessages([...messages, response?.data]);
       setReplyText("");
+      setFile(null);
+      setFilePreview("");
     } catch (error) {
       console.error("Error sending reply:", error);
     }
@@ -157,6 +189,9 @@ const SupportInbox = () => {
                               {msg.message_text}
                             </h2>
                           </div>
+                          {msg?.message_image && (
+                        <img className="w-[50%] h-[50%] mt-1" src={`${API_BASE_URL}/${msg?.message_image}`} alt="" />
+                      )}
                           <div className="justify-start items-center inline-flex">
                             <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">
                               {formatTime(msg.created_at)}
@@ -173,6 +208,9 @@ const SupportInbox = () => {
                                 {msg.message_text}
                               </h5>
                             </div>
+                            {msg?.message_image && (
+                        <img className="w-[50%] h-[50%] mt-1" src={`${API_BASE_URL}/${msg?.message_image}`} alt="" />
+                      )}
                             <div className="justify-end items-center inline-flex mb-2.5">
                               <h6 className="text-gray-500 text-xs font-normal leading-4 py-1">
                                 {formatTime(msg.created_at)}
@@ -187,7 +225,26 @@ const SupportInbox = () => {
               })}
               <div ref={chatEndRef} />
             </div>
-            <div className="w-full pl-3 pr-1 py-1 px-2 rounded-3xl border border-gray-200 items-center gap-2 inline-flex">
+            <div className="relative w-full pl-3 pr-1 py-1 px-2 rounded-3xl border border-gray-200 items-center gap-2 inline-flex">
+               {/* Floating Image Preview */}
+              {filePreview && (
+                <div className="absolute top-[-138px] left-0 right-0 flex justify-center">
+                  <div className="relative w-[120px] h-[120px] bg-white shadow-lg rounded-lg p-2">
+                    <span
+                      className="absolute top-1 right-1 text-gray-500 p-1 bg-black"
+                      onClick={removeSelectedImage}
+                    >
+                      <IoClose size={20} className="text-white"/>
+                    </span>
+                    <img
+                      src={filePreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="w-full">
                 <input
                   type="text"
@@ -198,12 +255,26 @@ const SupportInbox = () => {
                   className="w-full grow shrink basis-0 text-black text-xs font-medium leading-4 focus:outline-none h-[20px]"
                 />
               </div>
-              <button
-                onClick={sendReply}
-                className="ml-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex"
-              >
-                <FaReply title="reply" />
-              </button>
+             
+              <div className="flex items-center gap-2">
+                <ImAttachment
+                  size={20}
+                  onClick={handleAttachmentClick}
+                  className="cursor-pointer"
+                />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  style={{ display: "none" }} // Hide the file input
+                />
+                  <button
+                      onClick={sendReply}
+                      className="ml-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex"
+                    >
+                      <FaReply title="reply" />
+                  </button>
+              </div>
             </div>
           </>
         ) : (
