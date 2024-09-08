@@ -13,6 +13,7 @@ import { useUpdateUserBalance } from "../../hooks/useUpdateUserBalance";
 import useCryptoTradeConverter from "../../hooks/userCryptoTradeConverter";
 import useSettings from "../../hooks/useSettings";
 import Decimal from "decimal.js";
+import { useSocketContext } from "../../context/SocketContext";
 
 const Funds = () => {
   const location = useLocation();
@@ -27,14 +28,16 @@ const Funds = () => {
   const [withdrawAddress, setWithdrawAddress] = useState("");
   const [screenshot, setScreenshot] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [depositStatus, setDepositStatus] = useState(null);
   const [availableBalance, setAvailableBalance] = useState("");
+  const { socket } = useSocketContext();
   const { updateUserBalance, success } = useUpdateUserBalance();
   const {
     data: latestDeposit,
     loading,
     refetch,
   } = useFetchLatestDeposit(user?.id, wallet?.coin_id);
-  const { balance } = useFetchUserBalance(user?.id, wallet?.coin_id);
+  const { balance,refetch:refetchUserBalance } = useFetchUserBalance(user?.id, wallet?.coin_id);
   const { convertUSDTToCoin } = useCryptoTradeConverter();
 
   useEffect(() => {
@@ -223,7 +226,7 @@ const Funds = () => {
       const now = new Date();
       const diff = countdownEnd - now;
 
-      if (diff <= 0) {
+      if (diff <= 0 ) {
         setTimeLeft("");
         return;
       }
@@ -247,6 +250,22 @@ const Funds = () => {
     timerInterval = setInterval(updateTimer, 1000);
     return () => clearInterval(timerInterval);
   }, [latestDeposit]);
+
+  useEffect(() => {
+  
+    const handleUpdateDeposit = (data) => {
+      console.log("Deposit updated: ", data?.deposit.status);
+      setDepositStatus(data?.deposit.status)
+      if( data?.deposit.status === "approved" || data?.deposit.status === "rejected"){
+        refetch();
+        refetchUserBalance();    
+      }
+    };
+
+    socket?.on("updateDeposit", handleUpdateDeposit);
+
+    return () => socket?.off("updateDeposit", handleUpdateDeposit);
+  }, [socket]);
 
   return (
     <div className="recharge">
@@ -492,7 +511,7 @@ const Funds = () => {
                     </div>
                   </div>
                 </div>
-                {timeLeft && (
+                {timeLeft &&(
                   <div
                     className=" m-t-5"
                     style={{ fontSize: "20px", marginTop: "10px" }}
