@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import {API_BASE_URL} from '../api/getApiURL';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { API_BASE_URL } from "../api/getApiURL";
 
 export const useFetchUserBalance = (userId, coinId) => {
   const [balance, setBalance] = useState(null);
@@ -9,7 +9,9 @@ export const useFetchUserBalance = (userId, coinId) => {
 
   const fetchBalance = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/userbalance/${userId}/balance/${coinId}`);
+      const response = await axios.get(
+        `${API_BASE_URL}/userbalance/${userId}/balance/${coinId}`
+      );
       setBalance(response.data.data);
     } catch (err) {
       setError(err);
@@ -24,5 +26,5 @@ export const useFetchUserBalance = (userId, coinId) => {
     }
   }, [userId, coinId]);
 
-  return { balance, loading, error,refetch:fetchBalance  };
+  return { balance, loading, error, refetch: fetchBalance };
 };
