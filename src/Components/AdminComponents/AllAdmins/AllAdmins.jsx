@@ -7,6 +7,7 @@ import Pagination from "../../Pagination/Pagination";
 import BalanceModal from "../AdminUsers/BalanceModal";
 import MoreActionModal from "../AdminUsers/MoreActionModal";
 import CreateUserModal from "../AdminUsers/CreateUserModal";
+import PermissionModal from "../AdminUsers/PermissionModal";
 
 const AllAdmins = () => {
   const { adminUser } = useUser();
@@ -19,6 +20,8 @@ const AllAdmins = () => {
   const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
   const [isMore, setIsMore] = useState(false);
   const [isNewUserOpen, setIsNewUserOpen] = useState(false);
+  
+  const [isPermissionOpen, setIsPermissionOpen] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
@@ -106,6 +109,15 @@ const AllAdmins = () => {
 
   const closeNewUser = () => {
     setIsNewUserOpen(false);
+  };
+
+  const openPermissionModal = (user) => {
+    setUserDetails(user);
+    setIsPermissionOpen(true);
+  };
+
+  const closePermissionModal = () => {
+    setIsPermissionOpen(false);
   };
 
   const handleUpdateSuccess = () => {
@@ -242,14 +254,10 @@ const AllAdmins = () => {
                     {user.is_referral === 1 ? "Disable Referral" : "Active Referral"}
                   </button> */}
                   <button
-                    onClick={() => handleProfitUpdate(user)}
-                    className={`text-xs text-white py-1 px-2 rounded ${
-                      user.is_profit === 1
-                        ? "bg-red-600 hover:bg-red-700"
-                        : "bg-gray-800 hover:bg-gray-600"
-                    }`}
+                    onClick={() => openPermissionModal(user)}
+                    className={`text-xs text-white py-1 px-2 rounded bg-gray-800 hover:bg-gray-600`}
                   >
-                    {user.is_profit === 1 ? "Lose" : "Profit"}
+                    Permissions
                   </button>
                   {adminUser?.role === "superadmin" && (
                     <button
@@ -284,6 +292,13 @@ const AllAdmins = () => {
       <CreateUserModal
         isOpen={isNewUserOpen}
         onClose={closeNewUser}
+        onUpdateSuccess={handleUpdateSuccess}
+      />
+
+      <PermissionModal
+        isOpen={isPermissionOpen}
+        onClose={closePermissionModal}
+        details={userDetails}
         onUpdateSuccess={handleUpdateSuccess}
       />
 
