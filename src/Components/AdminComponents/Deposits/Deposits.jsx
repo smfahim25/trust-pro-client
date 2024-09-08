@@ -145,12 +145,12 @@ const Deposits = () => {
       console.log("Deposit added: ", data);
       if (data) {
         console.log("handleUpdateSuccess called");
-        handleUpdateSuccess();
+        setRefreshDeposit(!refreshDeposit);
       }
     };
     socket?.on("newDeposit", handleUpdateDeposit);
     return () => socket?.off("newDeposit", handleUpdateDeposit);
-  }, [socket, handleUpdateSuccess]);
+  }, [socket, setRefreshDeposit, refreshDeposit]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">
@@ -176,7 +176,7 @@ const Deposits = () => {
           </tr>
         </thead>
         <tbody className="text-center">
-          {currentDeposits?.reverse().map((deposit, index) => (
+          {currentDeposits?.map((deposit, index) => (
             <tr key={deposit.id}>
               <td className="py-2 px-4 border-b">{index + 1}</td>
               <td className="py-2 px-4 border-b">{deposit?.user_uuid}</td>

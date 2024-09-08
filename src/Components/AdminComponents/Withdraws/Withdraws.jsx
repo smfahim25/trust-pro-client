@@ -133,12 +133,12 @@ const Withdraws = () => {
       console.log("withdraw added: ", data);
       if (data) {
         console.log("handleUpdateSuccess called");
-        handleUpdateSuccess();
+        setRefreshDeposit(!refreshDeposit);
       }
     };
     socket?.on("newWithdraw", handleUpdateWithdraw);
     return () => socket?.off("newWithdraw", handleUpdateWithdraw);
-  }, [socket, handleUpdateSuccess]);
+  }, [socket, setRefreshDeposit, refreshDeposit]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">
@@ -179,12 +179,14 @@ const Withdraws = () => {
 
               <td className="py-2 px-4 border-b">{withdraw.status}</td>
               <td className="py-2 px-4 border-b">
-                <button
-                  onClick={() => openDetailsModal(withdraw)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded mr-2"
-                >
-                  Edit
-                </button>
+                {withdraw.status === "pending" && (
+                  <button
+                    onClick={() => openDetailsModal(withdraw)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded mr-2"
+                  >
+                    Edit
+                  </button>
+                )}
                 <button
                   onClick={() => openModal(withdraw.id)}
                   className="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded"
