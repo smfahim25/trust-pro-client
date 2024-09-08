@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import { useUser } from "../../../context/UserContext";
 import Pagination from "../../Pagination/Pagination";
+import { useSocketContext } from "../../../context/SocketContext";
 
 const Withdraws = () => {
   const [withdraws, setWithdraws] = useState([]);
@@ -16,6 +17,7 @@ const Withdraws = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [depositDetail, setDepositDetail] = useState(null);
   const [refreshDeposit, setRefreshDeposit] = useState(false);
+  const { socket } = useSocketContext();
 
   useEffect(() => {
     const fetchWithdrawInfo = async () => {
@@ -125,6 +127,17 @@ const Withdraws = () => {
       </span>
     ));
   };
+
+  useEffect(() => {
+    const handleUpdateWithdraw = (data) => {
+      console.log("withdraw added: ", data);
+      if(data){
+        console.log("handleUpdateSuccess called");
+      }
+    };
+    socket?.on("newWithdraw", handleUpdateWithdraw);
+    return () => socket?.off("newWithdraw", handleUpdateWithdraw);
+  }, [socket]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">

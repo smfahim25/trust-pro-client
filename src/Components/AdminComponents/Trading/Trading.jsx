@@ -7,6 +7,7 @@ import DetailsCard from "./DetailsCard";
 import { useUser } from "../../../context/UserContext";
 import getMetalCoinName from "../../utils/getMetalCoinName";
 import Pagination from "../../Pagination/Pagination";
+import { useSocketContext } from "../../../context/SocketContext";
 
 const Trading = () => {
   const [trades, setTrades] = useState([]);
@@ -18,6 +19,8 @@ const Trading = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [tradeDetail, setTradeDetail] = useState(null);
   const [selectedTradeId, setSelectedTradeId] = useState(null);
+  
+  const { socket } = useSocketContext();
 
   useEffect(() => {
     const fetchTradeOrders = async () => {
@@ -152,6 +155,17 @@ const Trading = () => {
 
     return localDateTime.replace(",", "");
   };
+
+  useEffect(() => {
+    const handleUpdateTrading = (data) => {
+      console.log("new trade added: ", data);
+      if(data){
+        console.log("handleUpdateSuccess called");
+      }
+    };
+    socket?.on("newTradeOrder", handleUpdateTrading);
+    return () => socket?.off("newTradeOrder", handleUpdateTrading);
+  }, [socket]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">

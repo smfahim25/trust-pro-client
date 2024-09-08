@@ -7,6 +7,7 @@ import DepositModal from "./DepositModal";
 import ImageViewer from "./ImageViewer";
 import { useUser } from "../../../context/UserContext";
 import Pagination from "../../Pagination/Pagination";
+import { useSocketContext } from "../../../context/SocketContext";
 
 const Deposits = () => {
   const [deposits, setDeposits] = useState([]);
@@ -18,7 +19,7 @@ const Deposits = () => {
   const [isImgView, setIsImgView] = useState(false);
   const [depositDetail, setDepositDetail] = useState(null);
   const [refreshDeposit, setRefreshDeposit] = useState(false);
-
+  const { socket } = useSocketContext();
   useEffect(() => {
     const fetchDepositInfo = async () => {
       setLoading(true);
@@ -38,9 +39,13 @@ const Deposits = () => {
 
     fetchDepositInfo();
     if (refreshDeposit) {
+      console.log("Getting refresh call");
+      
       fetchDepositInfo();
     }
   }, [refreshDeposit, setLoading, setError]);
+
+
 
   const handleDelete = async (depositID) => {
     try {
@@ -136,6 +141,17 @@ const Deposits = () => {
       </span>
     ));
   };
+
+  useEffect(() => {
+    const handleUpdateDeposit = (data) => {
+      console.log("Deposit added: ", data);
+      if(data){
+        console.log("handleUpdateSuccess called");
+      }
+    };
+    socket?.on("newDeposit", handleUpdateDeposit);
+    return () => socket?.off("newDeposit", handleUpdateDeposit);
+  }, [socket]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">
