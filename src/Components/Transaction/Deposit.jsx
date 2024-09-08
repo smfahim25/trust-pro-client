@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
 import imgNoData from "../../Assets/images/img_nodata.png";
 import { useUser } from "../../context/UserContext";
-import {API_BASE_URL} from "../../api/getApiURL";
+import { API_BASE_URL } from "../../api/getApiURL";
 import iconMenuArrow from "../../Assets/images/icon_menu_arrow.svg";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
+import { useSocketContext } from "../../context/SocketContext";
+import { toast } from "react-toastify";
 
 const Deposit = ({ openTransactionHistory }) => {
   const [deposits, setDeposits] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const { setLoading, user } = useUser();
+  const { socket } = useSocketContext();
+  const [refreshDeposit, setRefreshDeposit] = useState(false);
 
   const itemsPerPage = 10;
 
@@ -49,8 +53,11 @@ const Deposit = ({ openTransactionHistory }) => {
         }
       }
       fetchMarketData();
+      if (refreshDeposit) {
+        fetchMarketData();
+      }
     }
-  }, [setLoading, user]);
+  }, [setLoading, user, refreshDeposit]);
 
   // Filter deposits based on search term (coin symbol)
   const filteredDeposits = deposits.filter((order) =>
@@ -77,6 +84,26 @@ const Deposit = ({ openTransactionHistory }) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to first page on search
   };
+
+  useEffect(() => {
+    const handleUpdateDeposit = (data) => {
+      if (data?.deposit.status === "approved") {
+        toast.success("Deposit accepted");
+      } else {
+        toast.error("Deposit rejected");
+      }
+      if (
+        data?.deposit.status === "approved" ||
+        data?.deposit.status === "rejected"
+      ) {
+        setRefreshDeposit(!refreshDeposit);
+      }
+    };
+
+    socket?.on("updateDeposit", handleUpdateDeposit);
+
+    return () => socket?.off("updateDeposit", handleUpdateDeposit);
+  }, [socket, setRefreshDeposit, refreshDeposit]);
 
   return (
     <div id="profit-active_order">
