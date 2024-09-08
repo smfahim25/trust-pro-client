@@ -168,6 +168,18 @@ const Trading = () => {
     return () => socket?.off("newTradeOrder", handleUpdateTrading);
   }, [socket, setIsUpdated, isUpdated]);
 
+  useEffect(() => {
+    const handleUpdateTrading = (data) => {
+      console.log("trade status changed : ", data);
+      if (data) {
+        console.log("handleUpdateSuccess called");
+        setIsUpdated(!isUpdated);
+      }
+    };
+    socket?.on("updateTradeStatus", handleUpdateTrading);
+    return () => socket?.off("updateTradeStatus", handleUpdateTrading);
+  }, [socket, setIsUpdated, isUpdated]);
+
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">
       <input

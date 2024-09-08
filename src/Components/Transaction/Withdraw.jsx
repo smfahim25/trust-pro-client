@@ -4,12 +4,16 @@ import iconMenuArrow from "../../Assets/images/icon_menu_arrow.svg";
 import { useUser } from "../../context/UserContext";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import {API_BASE_URL} from "../../api/getApiURL";
+import { useSocketContext } from "../../context/SocketContext";
+import { toast } from "react-toastify";
 
 const Withdraw = ({ openTransactionHistory }) => {
   const [withdraws, setWithdraws] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const { setLoading, user } = useUser();
+  const { socket } = useSocketContext();
+  const [refreshWithdraw, setRefreshWithdraw] = useState(false);
 
   const itemsPerPage = 3;
 
@@ -49,8 +53,11 @@ const Withdraw = ({ openTransactionHistory }) => {
         }
       }
       fetchMarketData();
+      if(refreshWithdraw){
+        fetchMarketData();
+      }
     }
-  }, [setLoading, user]);
+  }, [setLoading, user,refreshWithdraw]);
 
   // Filter deposits based on search term (coin symbol)
   const filteredWithdraws = withdraws.filter((order) =>
@@ -77,6 +84,27 @@ const Withdraw = ({ openTransactionHistory }) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to first page on search
   };
+
+  useEffect(() => {
+    const handleUpdateWithdraw = (data) => {
+      if (data?.withdraw.status === "approved") {
+        toast.success("Withdraw accepted");
+      } else {
+        toast.error("Withdraw rejected");
+      }
+      if (
+        data?.withdraw.status === "approved" ||
+        data?.withdraw.status === "rejected"
+      ) {
+        setRefreshWithdraw(!refreshWithdraw);
+      }
+    };
+
+    socket?.on("updateWithdraw", handleUpdateWithdraw);
+
+    return () => socket?.off("updateWithdraw", handleUpdateWithdraw);
+  }, [socket, setRefreshWithdraw, refreshWithdraw]);
+
 
   return (
     <div id="profit-active_order">
