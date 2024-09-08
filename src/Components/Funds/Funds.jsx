@@ -3,7 +3,7 @@ import Header from "../Header/Header";
 import axios from "axios";
 import { useUser } from "../../context/UserContext";
 import { useLocation } from "react-router";
-import {API_BASE_URL} from "../../api/getApiURL";
+import { API_BASE_URL } from "../../api/getApiURL";
 import useFetchLatestDeposit from "../../hooks/useFetchLatestDeposit";
 import { useFetchUserBalance } from "../../hooks/useFetchUserBalance";
 import { FaRegCopy } from "react-icons/fa";
@@ -28,7 +28,6 @@ const Funds = () => {
   const [withdrawAddress, setWithdrawAddress] = useState("");
   const [screenshot, setScreenshot] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [depositStatus, setDepositStatus] = useState(null);
   const [availableBalance, setAvailableBalance] = useState("");
   const { socket } = useSocketContext();
   const { updateUserBalance, success } = useUpdateUserBalance();
@@ -37,7 +36,10 @@ const Funds = () => {
     loading,
     refetch,
   } = useFetchLatestDeposit(user?.id, wallet?.coin_id);
-  const { balance,refetch:refetchUserBalance } = useFetchUserBalance(user?.id, wallet?.coin_id);
+  const { balance, refetch: refetchUserBalance } = useFetchUserBalance(
+    user?.id,
+    wallet?.coin_id
+  );
   const { convertUSDTToCoin } = useCryptoTradeConverter();
 
   useEffect(() => {
@@ -226,7 +228,7 @@ const Funds = () => {
       const now = new Date();
       const diff = countdownEnd - now;
 
-      if (diff <= 0 ) {
+      if (diff <= 0) {
         setTimeLeft("");
         return;
       }
@@ -252,20 +254,25 @@ const Funds = () => {
   }, [latestDeposit]);
 
   useEffect(() => {
-  
     const handleUpdateDeposit = (data) => {
-      console.log("Deposit updated: ", data?.deposit.status);
-      setDepositStatus(data?.deposit.status)
-      if( data?.deposit.status === "approved" || data?.deposit.status === "rejected"){
+      if (data?.deposit.status === "approved") {
+        toast.success("Deposit accepted");
+      } else {
+        toast.error("Deposit rejected");
+      }
+      if (
+        data?.deposit.status === "approved" ||
+        data?.deposit.status === "rejected"
+      ) {
         refetch();
-        refetchUserBalance();    
+        refetchUserBalance();
       }
     };
 
     socket?.on("updateDeposit", handleUpdateDeposit);
 
     return () => socket?.off("updateDeposit", handleUpdateDeposit);
-  }, [socket]);
+  }, [socket, refetch, refetchUserBalance]);
 
   return (
     <div className="recharge">
@@ -511,7 +518,7 @@ const Funds = () => {
                     </div>
                   </div>
                 </div>
-                {timeLeft &&(
+                {timeLeft && (
                   <div
                     className=" m-t-5"
                     style={{ fontSize: "20px", marginTop: "10px" }}

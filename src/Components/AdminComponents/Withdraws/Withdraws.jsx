@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {API_BASE_URL} from "../../../api/getApiURL";
+import { API_BASE_URL } from "../../../api/getApiURL";
 import DepositModal from "../Deposits/DepositModal";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -40,7 +40,7 @@ const Withdraws = () => {
     if (refreshDeposit) {
       fetchWithdrawInfo();
     }
-  }, [refreshDeposit]);
+  }, [refreshDeposit, setLoading]);
 
   const handleDelete = async (withdrawID) => {
     try {
@@ -131,13 +131,14 @@ const Withdraws = () => {
   useEffect(() => {
     const handleUpdateWithdraw = (data) => {
       console.log("withdraw added: ", data);
-      if(data){
+      if (data) {
         console.log("handleUpdateSuccess called");
+        handleUpdateSuccess();
       }
     };
     socket?.on("newWithdraw", handleUpdateWithdraw);
     return () => socket?.off("newWithdraw", handleUpdateWithdraw);
-  }, [socket]);
+  }, [socket, handleUpdateSuccess]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">

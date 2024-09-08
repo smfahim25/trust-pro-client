@@ -10,7 +10,7 @@ import { useUser } from "../../context/UserContext";
 import useCryptoTradeConverter from "../../hooks/userCryptoTradeConverter";
 import { useFetchUserBalance } from "../../hooks/useFetchUserBalance";
 import { useUpdateUserBalance } from "../../hooks/useUpdateUserBalance";
-import {API_BASE_URL} from "../../api/getApiURL";
+import { API_BASE_URL } from "../../api/getApiURL";
 import { toast } from "react-toastify";
 import useTimerProfit from "../../hooks/useTimerProfit";
 import TradeviewChart from "../Chart/TradeviewChart";
@@ -41,7 +41,6 @@ const Business = () => {
   const [tradeCoinId /*setTradeCoinId*/] = useState(coin);
   const [walletAmount, setWalletAmount] = useState(0.0);
   const { balance } = useFetchUserBalance(user?.id, selectedWallet?.coin_id);
-
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);

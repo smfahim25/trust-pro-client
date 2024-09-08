@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {API_BASE_URL} from "../../../api/getApiURL";
+import { API_BASE_URL } from "../../../api/getApiURL";
 import { toast } from "react-toastify";
 import axios from "axios";
 import DeleteModal from "../DeleteModal/DeleteModal";
@@ -19,7 +19,7 @@ const Trading = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [tradeDetail, setTradeDetail] = useState(null);
   const [selectedTradeId, setSelectedTradeId] = useState(null);
-  
+
   const { socket } = useSocketContext();
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Trading = () => {
     if (isUpdated) {
       fetchTradeOrders();
     }
-  }, [isUpdated]);
+  }, [isUpdated, setLoading]);
 
   // filtering and pagination
   const [filteredTrades, setFilteredTrades] = useState([]);
@@ -159,13 +159,14 @@ const Trading = () => {
   useEffect(() => {
     const handleUpdateTrading = (data) => {
       console.log("new trade added: ", data);
-      if(data){
+      if (data) {
         console.log("handleUpdateSuccess called");
+        setIsUpdated(!isUpdated);
       }
     };
     socket?.on("newTradeOrder", handleUpdateTrading);
     return () => socket?.off("newTradeOrder", handleUpdateTrading);
-  }, [socket]);
+  }, [socket, setIsUpdated, isUpdated]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">

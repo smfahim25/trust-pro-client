@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {API_BASE_URL} from "../../../api/getApiURL";
+import { API_BASE_URL } from "../../../api/getApiURL";
 import axios from "axios";
 import { toast } from "react-toastify";
 import DeleteModal from "../DeleteModal/DeleteModal";
@@ -40,12 +40,10 @@ const Deposits = () => {
     fetchDepositInfo();
     if (refreshDeposit) {
       console.log("Getting refresh call");
-      
+
       fetchDepositInfo();
     }
   }, [refreshDeposit, setLoading, setError]);
-
-
 
   const handleDelete = async (depositID) => {
     try {
@@ -145,13 +143,14 @@ const Deposits = () => {
   useEffect(() => {
     const handleUpdateDeposit = (data) => {
       console.log("Deposit added: ", data);
-      if(data){
+      if (data) {
         console.log("handleUpdateSuccess called");
+        handleUpdateSuccess();
       }
     };
     socket?.on("newDeposit", handleUpdateDeposit);
     return () => socket?.off("newDeposit", handleUpdateDeposit);
-  }, [socket]);
+  }, [socket, handleUpdateSuccess]);
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">
@@ -177,7 +176,7 @@ const Deposits = () => {
           </tr>
         </thead>
         <tbody className="text-center">
-          {currentDeposits?.map((deposit, index) => (
+          {currentDeposits?.reverse().map((deposit, index) => (
             <tr key={deposit.id}>
               <td className="py-2 px-4 border-b">{index + 1}</td>
               <td className="py-2 px-4 border-b">{deposit?.user_uuid}</td>
@@ -200,12 +199,14 @@ const Deposits = () => {
               </td>
               <td className="py-2 px-4 border-b">{deposit.status}</td>
               <td className="py-2 px-4 border-b">
-                <button
-                  onClick={() => openDetailsModal(deposit)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded mr-2"
-                >
-                  Edit
-                </button>
+                {deposit.status === "pending" && (
+                  <button
+                    onClick={() => openDetailsModal(deposit)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded mr-2"
+                  >
+                    Edit
+                  </button>
+                )}
                 <button
                   onClick={() => openModal(deposit.id)}
                   className="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded"
