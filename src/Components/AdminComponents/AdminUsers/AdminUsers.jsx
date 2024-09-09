@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {API_BASE_URL} from "../../../api/getApiURL";
+import { API_BASE_URL } from "../../../api/getApiURL";
 import axios from "axios";
 import { toast } from "react-toastify";
 import BalanceModal from "./BalanceModal";
@@ -42,7 +42,7 @@ const AdminUsers = () => {
     if (updateSuccess || refreshDeposit) {
       fetchUserInfo();
     }
-  }, [updateSuccess, refreshDeposit]);
+  }, [updateSuccess, refreshDeposit, setLoading]);
 
   const handleRefUpdate = async (user) => {
     const updatedUser = {
@@ -100,9 +100,9 @@ const AdminUsers = () => {
     setUserDetails(null);
   };
 
-  const openNewUser = () => {
-    setIsNewUserOpen(true);
-  };
+  // const openNewUser = () => {
+  //   setIsNewUserOpen(true);
+  // };
 
   const closeNewUser = () => {
     setIsNewUserOpen(false);
@@ -112,9 +112,9 @@ const AdminUsers = () => {
     setRefreshDeposit(!refreshDeposit);
   };
 
-  const handleDelete = () => {
-    console.log("deleting ");
-  };
+  // const handleDelete = () => {
+  //   console.log("deleting ");
+  // };
 
   const formatWalletAddress = (address) => {
     return address.match(/.{1,14}/g).map((segment, index) => (
@@ -205,19 +205,14 @@ const AdminUsers = () => {
       <table className="min-w-full border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
-            {/* <th className="py-2 px-4 border-b">#</th> */}
             <th className="py-2 px-4 border-b">UUID</th>
             <th className="py-2 px-4 border-b">Employee</th>
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Note</th>
-
             <th className="py-2 px-4 border-b">Email</th>
-            {/* <th className="py-2 px-4 border-b">Mobile</th> */}
-
             <th className="py-2 px-4 border-b">Wallet</th>
             <th className="py-2 px-4 border-b">Mobile</th>
             <th className="py-2 px-4 border-b">Trade Limit</th>
-
             <th className="py-2 px-4 border-b">Status</th>
             <th className="py-2 px-4 border-b">Registration</th>
             <th className="py-2 px-4 border-b">Action</th>
@@ -226,7 +221,6 @@ const AdminUsers = () => {
         <tbody className="text-center">
           {currentUsers?.map((user, index) => (
             <tr key={user.id}>
-              {/* <td className="py-2 px-4 border-b">{index + 1}</td> */}
               <td className="py-2 px-4 border-b">{user.uuid}</td>
               <td className="py-2 px-4 border-b">{user?.employee}</td>
               <td className="py-2 px-4 border-b">{user?.name}</td>
@@ -238,7 +232,7 @@ const AdminUsers = () => {
               </td>
 
               <td className="py-2 px-4 border-b">{user?.mobile}</td>
-              
+
               <td className="py-2 px-4 border-b">{user?.trade_limit}</td>
               <td className="py-2 px-4 border-b">{user?.status}</td>
               <td className="py-2 px-4 border-b">

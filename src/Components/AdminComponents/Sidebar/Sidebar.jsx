@@ -50,60 +50,71 @@ const Sidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  // Function to check if the admin has a specific permission, but only for 'admin' users
+  const hasPermission = (permission) => {
+    if (adminUser?.role === "superadmin") {
+      return true; // Superadmin has access to all options
+    }
+    return (
+      adminUser?.role === "admin" &&
+      adminUser?.permissions?.includes(permission)
+    );
+  };
+
   const sidebarOptions = [
     {
       to: "/cradmin",
       label: "Dashboard",
       iconPath: <MdDashboard size={20} />,
-      roles: ["admin", "superadmin"],
+      permission: "Dashboard", // Permission required
     },
     {
       to: "/cradmin/settings",
       label: "Edit Feature",
       iconPath: <IoSettingsSharp size={20} />,
-      roles: ["admin", "superadmin"],
+      permission: "Edit Feature", // Permission required
     },
     {
       to: "/cradmin/contact",
       label: "Contact",
       iconPath: <IoChatbox size={20} />,
-      roles: ["superadmin"],
+      permission: "Contact", // Permission required
     },
     {
       to: "/cradmin/live-support",
       label: "Inbox",
       iconPath: <IoChatbox size={20} />,
-      roles: ["admin", "superadmin"],
+      permission: "Inbox", // Permission required
     },
     {
       to: "/cradmin/wallets",
       label: "Wallets",
       iconPath: <FaWallet size={20} />,
-      roles: ["superadmin"],
+      permission: "Wallets", // Permission required
     },
     {
       to: "/cradmin/users",
       label: "Users",
       iconPath: <FaUsers size={20} />,
-      roles: ["admin", "superadmin"],
+      permission: "Users", // Permission required
     },
     {
       to: "/cradmin/admin-users",
       label: "Admin Users",
       iconPath: <FaUser size={20} />,
-      roles: ["superadmin"],
+      permission: "Admin Users", // Permission required
     },
     {
       to: "/cradmin/deposits",
       label: "Deposits",
       iconPath: <PiHandDepositFill size={20} />,
-      roles: ["admin", "superadmin"],
+      permission: "Deposits", // Permission required
     },
     {
       to: "/cradmin/withdraws",
       label: "Withdraws",
       iconPath: <PiHandWithdrawFill size={20} />,
-      roles: ["admin", "superadmin"],
+      permission: "Withdraws", // Permission required
     },
   ];
 
@@ -155,7 +166,7 @@ const Sidebar = () => {
         <ul className="space-y-6 mt-5">
           {sidebarOptions.map(
             (option) =>
-              option.roles.includes(adminUser?.role) && (
+              hasPermission(option.permission) && (
                 <li
                   key={option.to}
                   className={`flex items-center space-x-4 ${
