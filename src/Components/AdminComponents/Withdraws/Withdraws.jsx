@@ -121,6 +121,27 @@ const Withdraws = () => {
   };
 
   const formatWalletAddress = (address) => {
+    const handleCopyAddress = () => {
+      navigator.clipboard.writeText(address);
+      toast.success("Address copied to clipboard!");
+    };
+
+    return (
+      <span
+        onClick={handleCopyAddress}
+        style={{ display: "block", cursor: "pointer" }}
+        className="text-blue-500"
+      >
+        {address?.match(/.{1,14}/g)?.map((segment, index) => (
+          <span key={index} style={{ display: "block" }}>
+            {segment}
+          </span>
+        ))}
+      </span>
+    );
+  };
+
+  const formatTrans = (address) => {
     return address?.match(/.{1,14}/g)?.map((segment, index) => (
       <span key={index} style={{ display: "block" }}>
         {segment}
@@ -130,9 +151,7 @@ const Withdraws = () => {
 
   useEffect(() => {
     const handleUpdateWithdraw = (data) => {
-      console.log("withdraw added: ", data);
       if (data) {
-        console.log("handleUpdateSuccess called");
         setRefreshDeposit(!refreshDeposit);
       }
     };
@@ -174,7 +193,7 @@ const Withdraws = () => {
                 {formatWalletAddress(withdraw?.wallet_to)}
               </td>
               <td className="py-2 px-4 border-b">
-                {formatWalletAddress(withdraw?.trans_hash)}
+                {formatTrans(withdraw?.trans_hash)}
               </td>
 
               <td className="py-2 px-4 border-b">{withdraw.status}</td>
