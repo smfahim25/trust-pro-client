@@ -3,7 +3,7 @@ import imgNoData from "../../Assets/images/img_nodata.png";
 import iconMenuArrow from "../../Assets/images/icon_menu_arrow.svg";
 import { useUser } from "../../context/UserContext";
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
-import {API_BASE_URL} from "../../api/getApiURL";
+import { API_BASE_URL } from "../../api/getApiURL";
 import { useSocketContext } from "../../context/SocketContext";
 import { toast } from "react-toastify";
 
@@ -15,7 +15,7 @@ const Withdraw = ({ openTransactionHistory }) => {
   const { socket } = useSocketContext();
   const [refreshWithdraw, setRefreshWithdraw] = useState(false);
 
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
 
   const getFormattedDeliveryTime = (createdAt) => {
     const date = new Date(createdAt);
@@ -53,11 +53,11 @@ const Withdraw = ({ openTransactionHistory }) => {
         }
       }
       fetchMarketData();
-      if(refreshWithdraw){
+      if (refreshWithdraw) {
         fetchMarketData();
       }
     }
-  }, [setLoading, user,refreshWithdraw]);
+  }, [setLoading, user, refreshWithdraw]);
 
   // Filter deposits based on search term (coin symbol)
   const filteredWithdraws = withdraws.filter((order) =>
@@ -104,7 +104,6 @@ const Withdraw = ({ openTransactionHistory }) => {
 
     return () => socket?.off("updateWithdraw", handleUpdateWithdraw);
   }, [socket, setRefreshWithdraw, refreshWithdraw]);
-
 
   return (
     <div id="profit-active_order">
