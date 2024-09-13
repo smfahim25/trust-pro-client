@@ -159,6 +159,23 @@ const Withdraws = () => {
     return () => socket?.off("newWithdraw", handleUpdateWithdraw);
   }, [socket, setRefreshDeposit, refreshDeposit]);
 
+  const getFormattedDeliveryTime = (createdAt) => {
+    const date = new Date(createdAt);
+
+    // Convert date to local time string
+    const localDateTime = date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    return localDateTime.replace(",", "");
+  };
+
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">
       <input
@@ -178,6 +195,7 @@ const Withdraws = () => {
             <th className="py-2 px-4 border-b">Amount</th>
             <th className="py-2 px-4 border-b">Wallet Address</th>
             <th className="py-2 px-4 border-b">Transaction Hash</th>
+            <th className="py-2 px-4 border-b">Withdraw Date</th>
             <th className="py-2 px-4 border-b">Status</th>
             <th className="py-2 px-4 border-b">Action</th>
           </tr>
@@ -195,7 +213,9 @@ const Withdraws = () => {
               <td className="py-2 px-4 border-b">
                 {formatTrans(withdraw?.trans_hash)}
               </td>
-
+              <td className="py-2 px-4 border-b">
+                {getFormattedDeliveryTime(withdraw?.created_at)}
+              </td>
               <td className="py-2 px-4 border-b">{withdraw.status}</td>
               <td className="py-2 px-4 border-b">
                 {withdraw.status === "pending" && (

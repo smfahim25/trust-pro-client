@@ -142,15 +142,30 @@ const Deposits = () => {
 
   useEffect(() => {
     const handleUpdateDeposit = (data) => {
-      console.log("Deposit added: ", data);
       if (data) {
-        console.log("handleUpdateSuccess called");
         setRefreshDeposit(!refreshDeposit);
       }
     };
     socket?.on("newDeposit", handleUpdateDeposit);
     return () => socket?.off("newDeposit", handleUpdateDeposit);
   }, [socket, setRefreshDeposit, refreshDeposit]);
+
+  const getFormattedDeliveryTime = (createdAt) => {
+    const date = new Date(createdAt);
+
+    // Convert date to local time string
+    const localDateTime = date.toLocaleString("en-US", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    return localDateTime.replace(",", "");
+  };
 
   return (
     <div className="h-[80vh] overflow-x-auto overflow-y-auto">
@@ -171,6 +186,7 @@ const Deposits = () => {
             <th className="py-2 px-4 border-b">Amount</th>
             <th className="py-2 px-4 border-b">Documets</th>
             <th className="py-2 px-4 border-b">Wallet Address</th>
+            <th className="py-2 px-4 border-b">Deposit Date</th>
             <th className="py-2 px-4 border-b">Status</th>
             <th className="py-2 px-4 border-b">Action</th>
           </tr>
@@ -196,6 +212,9 @@ const Deposits = () => {
               </td>
               <td className="py-2 px-4 border-b">
                 {formatWalletAddress(deposit?.wallet_from)}
+              </td>
+              <td className="py-2 px-4 border-b">
+                {getFormattedDeliveryTime(deposit?.created_at)}
               </td>
               <td className="py-2 px-4 border-b">{deposit.status}</td>
               <td className="py-2 px-4 border-b">
