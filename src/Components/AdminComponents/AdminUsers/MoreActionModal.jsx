@@ -111,7 +111,6 @@ const MoreActionModal = ({
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter name"
-                    required
                   />
                 </div>
                 {role === "superadmin" && (
@@ -131,7 +130,6 @@ const MoreActionModal = ({
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Enter your email"
-                        required
                       />
                     </div>
 
@@ -184,7 +182,6 @@ const MoreActionModal = ({
                         value={formData.role}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
                       >
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
@@ -208,7 +205,6 @@ const MoreActionModal = ({
                       value={formData.status}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
                     >
                       <option value="active">Active</option>
                       <option value="inactive">InActive</option>
