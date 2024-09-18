@@ -209,11 +209,17 @@ const AdminUsers = () => {
             <th className="py-2 px-4 border-b">Employee</th>
             <th className="py-2 px-4 border-b">Name</th>
             <th className="py-2 px-4 border-b">Note</th>
-            <th className="py-2 px-4 border-b">Email</th>
+            {AdminUsers.role === "superadmin" && (
+              <th className="py-2 px-4 border-b">Email</th>
+            )}
             <th className="py-2 px-4 border-b">Wallet</th>
-            <th className="py-2 px-4 border-b">Mobile</th>
+            {AdminUsers.role === "superadmin" && (
+              <th className="py-2 px-4 border-b">Mobile</th>
+            )}
             <th className="py-2 px-4 border-b">Trade Limit</th>
-            <th className="py-2 px-4 border-b">Status</th>
+            {AdminUsers.role === "superadmin" && (
+              <th className="py-2 px-4 border-b">Status</th>
+            )}
             <th className="py-2 px-4 border-b">Registration</th>
             <th className="py-2 px-4 border-b">Action</th>
           </tr>
@@ -225,16 +231,21 @@ const AdminUsers = () => {
               <td className="py-2 px-4 border-b">{user?.employee}</td>
               <td className="py-2 px-4 border-b">{user?.name}</td>
               <td className="py-2 px-4 border-b">{user?.note}</td>
-              <td className="py-2 px-4 border-b">{user?.email}</td>
-
+              {AdminUsers.role === "superadmin" && (
+                <td className="py-2 px-4 border-b">{user?.email}</td>
+              )}
               <td className="py-2 px-4 border-b">
                 {formatWalletAddress(user?.user_wallet)}
               </td>
 
-              <td className="py-2 px-4 border-b">{user?.mobile}</td>
+              {AdminUsers.role === "superadmin" && (
+                <td className="py-2 px-4 border-b">{user?.mobile}</td>
+              )}
 
               <td className="py-2 px-4 border-b">{user?.trade_limit}</td>
-              <td className="py-2 px-4 border-b">{user?.status}</td>
+              {AdminUsers.role === "superadmin" && (
+                <td className="py-2 px-4 border-b">{user?.status}</td>
+              )}
               <td className="py-2 px-4 border-b">
                 {getFormattedDeliveryTime(user?.user_registered)}
               </td>
