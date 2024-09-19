@@ -4,6 +4,7 @@ import axios from "axios";
 import {API_BASE_URL} from "../../../api/getApiURL";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import { toast } from "react-toastify";
+import UpdateTimer from "./UpdateTimer";
 
 const Settings = () => {
   const { adminUser,setLoading } = useUser();
@@ -14,6 +15,9 @@ const Settings = () => {
   const [refreshSetting, setRefreSetting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTimer, setSelectedTimer] = useState("");
+  const [updateSuccess, setIsUpdateSuccess] = useState(false);
+  const [timerDetails, setTimerDetails] = useState(null);
+  const [isMore, setIsMore] = useState(false);
 
   const [formData, setFormData] = useState({
     referral_registration_status: "",
@@ -87,6 +91,20 @@ const Settings = () => {
       ...formData,
       [name]: value,
     });
+  };
+
+  const openMore = (user) => {
+    setTimerDetails(user);
+    setIsMore(true);
+  };
+
+  const closeMore = () => {
+    setIsMore(false);
+    setTimerDetails(null);
+  };
+
+  const handleUpdateSuccess = () => {
+    setRefreshData(!refreshData);
   };
 
   const handleTimerChange = (e) => {
@@ -439,10 +457,10 @@ const Settings = () => {
                     </td>
                     <td className="py-2 px-4 border-b">
                       <button
-                        onClick={() => openModal(timerProfit.id)}
-                        className={`text-xs text-white py-1 px-2 rounded bg-red-600 hover:bg-red-700 `}
+                        onClick={() => openMore(timerProfit)}
+                        className={`text-xs text-white py-1 px-2 rounded bg-blue-600 hover:bg-blue-700 `}
                       >
-                        Delete
+                        Update
                       </button>
                     </td>
                   </tr>
@@ -475,7 +493,16 @@ const Settings = () => {
         title="Timer Profit"
         description="This action cannot be undone."
       />
+
+    <UpdateTimer
+        isOpen={isMore}
+        onClose={closeMore}
+        details={timerDetails}
+        role={adminUser?.role}
+        onUpdateSuccess={handleUpdateSuccess}
+      />
     </div>
+    
   );
 };
 

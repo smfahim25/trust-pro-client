@@ -10,6 +10,7 @@ import { format, formatDistanceToNow, differenceInHours } from "date-fns";
 import { FaReply } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { ImAttachment } from "react-icons/im";
+import { toast } from "react-toastify";
 
 const SupportInbox = () => {
   const { adminUser } = useUser();
@@ -148,6 +149,24 @@ const SupportInbox = () => {
     setSelectedImage(null);
   };
 
+  // delete conversations 
+  const handleDelete = async (convID) => {
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/conversation/${convID}`
+      );
+      console.log("Delete response: ", response);
+      setConversations((prevConversations) =>
+        prevConversations.filter((conv) => conv.conversation_id !== convID)
+      );
+      toast.success("Delete Successful");
+    } catch (error) {
+      console.error("There was an error deleting the deposit: ", error);
+      toast.error("Delete Failed");
+    }
+  };
+
+
   return (
     <div className="flex">
       <div className="w-1/3 bg-white shadow-lg p-4 h-[90vh] overflow-y-auto">
@@ -162,6 +181,9 @@ const SupportInbox = () => {
               <div className="flex justify-between">
                 <p>
                   {conv?.user1_name || conv?.user1_uuid}
+                  <span onClick={()=>handleDelete(conv.conversation_id)} className="inline-flex items-center justify-center p-1 ms-2 text-xs font-bold text-white bg-red-500 hover:bg-red-600 rounded">
+                      Delete
+                    </span>
                   {conv.unread_count > 0 && (
                     <span className="inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
                       {conv.unread_count}
