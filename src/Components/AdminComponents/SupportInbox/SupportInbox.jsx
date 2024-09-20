@@ -211,7 +211,7 @@ const SupportInbox = () => {
                     checkOnlineStatus(conv.user1_id)
                       ? "text-green-500"
                       : "text-red-500"
-                  }`}
+                  } flex items-center`}
                 >
                   <span
                     onClick={() => handleDelete(conv.conversation_id)}
