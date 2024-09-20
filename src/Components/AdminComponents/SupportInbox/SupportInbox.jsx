@@ -166,6 +166,25 @@ const SupportInbox = () => {
     }
   };
 
+  const handleProfitUpdate = async (user) => {
+    const updatedUser = {
+      message_status: user.message_status === 1 ? 0 : 1,
+    };
+
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/users/${user.user1_id}`,
+        updatedUser
+      );
+      toast.success("User updated successfully");
+      console.log("Data successfully submitted:", response);
+      // setIsUpdateSuccess(!updateSuccess);
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      toast.error("Failed to update user.");
+    }
+  };
+
 
   return (
     <div className="flex">
@@ -184,6 +203,16 @@ const SupportInbox = () => {
                   <span onClick={()=>handleDelete(conv.conversation_id)} className="inline-flex items-center justify-center p-1 ms-2 text-xs font-bold text-white bg-red-500 hover:bg-red-600 rounded">
                       Delete
                     </span>
+                    <span
+                    onClick={() => handleProfitUpdate(conv)}
+                    className={`text-xs text-white py-1 px-2 ms-2 rounded ${
+                      conv.message_status === 1
+                        ? "bg-red-600 hover:bg-red-700"
+                        : "bg-green-600 hover:bg-green-500"
+                    }`}
+                  >
+                    {conv.message_status === 1 ? "Block" : "Unblock"}
+                  </span>
                   {conv.unread_count > 0 && (
                     <span className="inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold text-blue-800 bg-blue-200 rounded-full">
                       {conv.unread_count}
