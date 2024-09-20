@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "../../../context/UserContext";
 import axios from "axios";
-import {API_BASE_URL} from "../../../api/getApiURL";
+import { API_BASE_URL } from "../../../api/getApiURL";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import { toast } from "react-toastify";
 import UpdateTimer from "./UpdateTimer";
 
 const Settings = () => {
-  const { adminUser,setLoading } = useUser();
+  const { adminUser, setLoading } = useUser();
   // const { timerProfits } = useTimerProfit();
   const [timerProfits, setTimerProfits] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
@@ -15,7 +15,6 @@ const Settings = () => {
   const [refreshSetting, setRefreSetting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTimer, setSelectedTimer] = useState("");
-  const [updateSuccess, setIsUpdateSuccess] = useState(false);
   const [timerDetails, setTimerDetails] = useState(null);
   const [isMore, setIsMore] = useState(false);
 
@@ -58,7 +57,7 @@ const Settings = () => {
     if (refreshData) {
       fetchTimerProftis();
     }
-  }, [refreshData]);
+  }, [refreshData, setLoading]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -81,7 +80,7 @@ const Settings = () => {
     if (refreshSetting) {
       fetchSettings();
     }
-  }, [refreshSetting]);
+  }, [refreshSetting, setLoading]);
 
   const [responseMessage, setResponseMessage] = useState("");
 
@@ -170,9 +169,7 @@ const Settings = () => {
 
   const handleReset = async () => {
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/reset`
-      );
+      const response = await axios.post(`${API_BASE_URL}/reset`);
       console.log("Delete response: ", response);
       toast.success("Reset Successful");
     } catch (error) {
@@ -460,7 +457,7 @@ const Settings = () => {
                         onClick={() => openMore(timerProfit)}
                         className={`text-xs text-white py-1 px-2 rounded bg-blue-600 hover:bg-blue-700 `}
                       >
-                        Update
+                        Edit
                       </button>
                     </td>
                   </tr>
@@ -470,21 +467,20 @@ const Settings = () => {
           </div>
         </div>
       </div>
-      {adminUser?.role ==='superadmin' && (
+      {adminUser?.role === "superadmin" && (
         <div className="flex flex-col items-center gap-4 p-6 rounded-md shadow-md sm:py-8 sm:px-12 bg-white text-black w-full mt-5">
-        <h2 className="text-center text-red-400">Danger Zone</h2>
-        <p>If you click here everything will be deleted. Are you sure?</p>
-        <div className="mb-4 flex justify-center">
-              <button
-                onClick={handleReset}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Reset All Data
-              </button>
-            </div>
-      </div>
+          <h2 className="text-center text-red-400">Danger Zone</h2>
+          <p>If you click here everything will be deleted. Are you sure?</p>
+          <div className="mb-4 flex justify-center">
+            <button
+              onClick={handleReset}
+              className="bg-red-500 hover:bg-red-600 text-white font-bold px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Reset All Data
+            </button>
+          </div>
+        </div>
       )}
-    
 
       <DeleteModal
         isOpen={isModalOpen}
@@ -494,7 +490,7 @@ const Settings = () => {
         description="This action cannot be undone."
       />
 
-    <UpdateTimer
+      <UpdateTimer
         isOpen={isMore}
         onClose={closeMore}
         details={timerDetails}
@@ -502,7 +498,6 @@ const Settings = () => {
         onUpdateSuccess={handleUpdateSuccess}
       />
     </div>
-    
   );
 };
 

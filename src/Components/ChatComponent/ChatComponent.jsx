@@ -53,7 +53,7 @@ const ChatComponent = () => {
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
+  console.log(data);
   useEffect(() => {
     if (data) {
       setSelectedConversation(data[0]);
