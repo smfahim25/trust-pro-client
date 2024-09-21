@@ -11,6 +11,7 @@ import useListenMessages from "../../hooks/useListenMessages";
 import useConversation from "../../zustand/useConversation";
 import useGetMessages from "../../hooks/useGetMessages";
 import { differenceInHours, format, formatDistanceToNow } from "date-fns";
+import { toast } from "react-toastify";
 
 const ChatComponent = () => {
   const [message, setMessage] = useState("");
@@ -53,7 +54,6 @@ const ChatComponent = () => {
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  console.log(data);
   useEffect(() => {
     if (data) {
       setSelectedConversation(data[0]);
@@ -67,9 +67,39 @@ const ChatComponent = () => {
   const handleInputChange = (e) => {
     setMessage(e.target.value);
   };
+  const [messageStatus,setMessageStatus] = useState(1);
+  const [refreshStatus, setRefreshStatus] = useState(false);
+  // checking message status blocked or unblocked
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/${user.id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMessageStatus(data.message_status);
+      } catch (err) {
+        console.log(err.message);
+      } 
+    };
+
+    fetchUserInfo();
+    if(refreshStatus){
+      fetchUserInfo();
+    }
+   
+    
+  }, [user,refreshStatus]);
 
   const sendMessage = async () => {
     if (message.trim() === "" && !file) return;
+    if (parseInt(messageStatus) === 0){
+      console.log("Message status  blocked : ",messageStatus);
+      toast.error("You can not send message.");
+      return;
+      
+    }
     formData.append("userId", user.id);
     formData.append("recipientId", 0);
     formData.append("messageText", message);
@@ -90,6 +120,7 @@ const ChatComponent = () => {
       setMessage("");
       setFile(null);
       setFilePreview("");
+      setRefreshStatus(!refreshStatus);
     } catch (err) {
       console.error("Failed to send message:", err);
     }
