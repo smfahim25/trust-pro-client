@@ -11,7 +11,6 @@ import useListenMessages from "../../hooks/useListenMessages";
 import useConversation from "../../zustand/useConversation";
 import useGetMessages from "../../hooks/useGetMessages";
 import { differenceInHours, format, formatDistanceToNow } from "date-fns";
-import { toast } from "react-toastify";
 
 const ChatComponent = () => {
   const [message, setMessage] = useState("");
@@ -67,7 +66,7 @@ const ChatComponent = () => {
   const handleInputChange = (e) => {
     setMessage(e.target.value);
   };
-  const [messageStatus,setMessageStatus] = useState(1);
+  const [messageStatus, setMessageStatus] = useState(1);
   const [refreshStatus, setRefreshStatus] = useState(false);
   // checking message status blocked or unblocked
   useEffect(() => {
@@ -81,25 +80,17 @@ const ChatComponent = () => {
         setMessageStatus(data.message_status);
       } catch (err) {
         console.log(err.message);
-      } 
+      }
     };
 
     fetchUserInfo();
-    if(refreshStatus){
+    if (refreshStatus) {
       fetchUserInfo();
     }
-   
-    
-  }, [user,refreshStatus]);
+  }, [user, refreshStatus]);
 
   const sendMessage = async () => {
     if (message.trim() === "" && !file) return;
-    if (parseInt(messageStatus) === 0){
-      console.log("Message status  blocked : ",messageStatus);
-      toast.error("You can not send message.");
-      return;
-      
-    }
     formData.append("userId", user.id);
     formData.append("recipientId", 0);
     formData.append("messageText", message);
@@ -275,54 +266,60 @@ const ChatComponent = () => {
         <div ref={chatEndRef} />
       </div>
 
-      <div className="relative w-full pl-3 pr-1 py-1 px-2 rounded-3xl border border-gray-200 items-center gap-2 inline-flex">
-        {/* Floating Image Preview */}
-        {filePreview && (
-          <div className="absolute top-[-138px] left-0 right-0 flex justify-center">
-            <div className="relative w-[120px] h-[120px] bg-white shadow-lg rounded-lg p-2">
-              <span
-                className="absolute top-1 right-1 text-gray-600 cursor-pointer"
-                onClick={removeSelectedImage}
-              >
-                <IoClose size={16} />
-              </span>
-              <img
-                src={filePreview}
-                alt="Preview"
-                className="w-full h-full object-cover rounded-md"
-              />
+      {messageStatus !== 0 ? (
+        <div className="relative w-full pl-3 pr-1 py-1 px-2 rounded-3xl border border-gray-200 items-center gap-2 inline-flex">
+          {/* Floating Image Preview */}
+          {filePreview && (
+            <div className="absolute top-[-138px] left-0 right-0 flex justify-center">
+              <div className="relative w-[120px] h-[120px] bg-white shadow-lg rounded-lg p-2">
+                <span
+                  className="absolute top-1 right-1 text-gray-600 cursor-pointer"
+                  onClick={removeSelectedImage}
+                >
+                  <IoClose size={16} />
+                </span>
+                <img
+                  src={filePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover rounded-md"
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        <span
-          className="cursor-pointer mr-1 text-xl text-gray-700"
-          onClick={handleAttachmentClick}
-        >
-          <ImAttachment />
-        </span>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-        <input
-          type="text"
-          placeholder="Message"
-          value={message}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          className="w-full px-2 py-1 border-none outline-none bg-transparent text-sm font-normal"
-        />
-        <button
-          onClick={handleSendMessage}
-          className="h-[40px] rounded-full flex justify-center items-center "
-        >
-          <IoSend className="text-white" />
-        </button>
-      </div>
+          <span
+            className="cursor-pointer mr-1 text-xl text-gray-700"
+            onClick={handleAttachmentClick}
+          >
+            <ImAttachment />
+          </span>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <input
+            type="text"
+            placeholder="Message"
+            value={message}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            className="w-full px-2 py-1 border-none outline-none bg-transparent text-sm font-normal"
+          />
+          <button
+            onClick={handleSendMessage}
+            className="h-[40px] rounded-full flex justify-center items-center "
+          >
+            <IoSend className="text-white" />
+          </button>
+        </div>
+      ) : (
+        <p className="text-center text-lg font-bold text-red-500">
+          You can't reply this conversion, sorry!!!
+        </p>
+      )}
 
       {/* Full-Screen Image Modal */}
       {selectedImage && (

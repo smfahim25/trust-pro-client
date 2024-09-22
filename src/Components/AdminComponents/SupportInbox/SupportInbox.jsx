@@ -371,7 +371,7 @@ const SupportInbox = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-center text-lg font-bold">
+              <p className="text-center text-lg font-bold text-red-500">
                 You can't reply this conversion
               </p>
             )}
